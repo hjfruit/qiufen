@@ -19,13 +19,19 @@
     "@typescript-eslint/parser": "^5.9.1",
     "commitizen": "^4.2.4",
     "eslint": "^8.6.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-react": "^7.28.0",
     "git-cz": "^4.8.0",
-    "husky": "^7.0.0"
+    "husky": "^7.0.0",
+    "lint-staged": "^12.1.7",
+    "prettier": "2.5.1"
   },
   "config": {
     "commitizen": {
       "path": "git-cz"
     }
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   }
 }
