@@ -1,0 +1,27 @@
+{
+  "name": "graphql-kit",
+  "version": "1.0.0",
+  "description": "A set of graphql tools",
+  "repository": "git@github.com:changhuali/graphql-kit.git",
+  "author": "changhuali <changhua.li.cq@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^16.0.2",
+    "@commitlint/config-conventional": "^16.0.0",
+    "commitizen": "^4.2.4",
+    "git-cz": "^4.8.0",
+    "husky": "^7.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "git-cz"
+    }
+  }
+}
