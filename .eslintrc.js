@@ -1,5 +1,10 @@
 module.exports = {
   extends: ['prettier'],
   root: true,
-  parser: '@typescript-eslint/parser',
+  plugins: ['react'],
+  parser: '@babel/eslint-parser',
+  parserOptions: {
+    ecmaVersion: 12,
+    requireConfigFile: false,
+  },
 }
