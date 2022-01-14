@@ -1,0 +1,23 @@
+{
+  "name": "graphql-kit-helpers",
+  "version": "1.0.0",
+  "description": "Collection of helper functions for resolving graphql AST",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "keywords": [
+    "graphql-kit",
+    "helpers"
+  ],
+  "author": "changhuali",
+  "license": "MIT",
+  "dependencies": {
+    "graphql": "^16.2.0"
+  }
+}

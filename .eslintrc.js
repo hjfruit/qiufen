@@ -1,10 +1,23 @@
 module.exports = {
-  extends: ['prettier'],
-  root: true,
-  plugins: ['react'],
-  parser: '@babel/eslint-parser',
-  parserOptions: {
-    ecmaVersion: 12,
-    requireConfigFile: false,
+  env: {
+    browser: true,
+    node: true,
+    es2021: true,
   },
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'prettier',
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 13,
+    sourceType: 'module',
+  },
+  plugins: ['react', '@typescript-eslint'],
+  rules: {},
 }
