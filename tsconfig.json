@@ -13,6 +13,5 @@
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noEmitOnError": true
-  },
-  "exclude": ["**/__test__"]
+  }
 }

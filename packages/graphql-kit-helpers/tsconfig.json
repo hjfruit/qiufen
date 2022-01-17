@@ -1,8 +1,7 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "include": ["src"],
+  "extends": "../../tsconfig.json",
+  "include": ["src", "__test__"],
   "compilerOptions": {
-    "declaration": true,
-    "sourceMap": true
+    "declaration": true
   }
 }

@@ -1,0 +1,28 @@
+"""用户信息"""
+type User {
+  """id"""
+  id: ID!
+  """姓名"""
+  name: String!
+  """年龄"""
+  age: Int!
+}
+
+type Query {
+  """根据用户id获取用户信息"""
+  user(userId: ID!): User
+}
+
+input UserModInput {
+  """id"""
+  id: ID!
+  """姓名"""
+  name: String
+  """年龄"""
+  age: Int
+}
+
+type Mutation {
+  """用户 : 修改用户信息 : 成功返回true否则返回false"""
+  userMod("""新用户信息"""user: UserModInput): Boolean
+}

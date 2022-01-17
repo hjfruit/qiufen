@@ -9,6 +9,7 @@
     "dist"
   ],
   "scripts": {
+    "test": "jest",
     "build": "rollup -c"
   },
   "keywords": [
