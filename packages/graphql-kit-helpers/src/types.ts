@@ -1,6 +1,8 @@
-import { ConstDirectiveNode } from 'graphql'
+import { ConstDirectiveNode, OperationTypeNode } from 'graphql'
 
-export type Directives = ReadonlyArray<ConstDirectiveNode>
+export type Directive = ConstDirectiveNode
+
+export type Directives = ReadonlyArray<Directive>
 
 export type EnumTypeDef = {
   name: string
@@ -11,8 +13,8 @@ export type EnumTypeDef = {
 
 export type FieldTypeDef = {
   description: string
-  type: string
   directives: Directives
+  type: string
   typeDef: TypeDef
 }
 
@@ -20,20 +22,12 @@ export type UnionTypeDef = Record<string, FieldTypeDef>
 
 export type TypeDef = EnumTypeDef | UnionTypeDef | undefined
 
-export interface OperationArgument {
+export interface OperationArgument extends FieldTypeDef {
   name: string
-  description: string
-  directives: Directives
-  type: string
-  typeDef: TypeDef
 }
 
-export interface OperationReturn {
+export interface OperationReturn extends FieldTypeDef {
   name: string
-  description: string
-  directives: Directives
-  type: string
-  typeDef: TypeDef
 }
 
 export interface Operation {
@@ -43,3 +37,9 @@ export interface Operation {
   arguments: OperationArgument[]
   return: OperationReturn
 }
+
+export interface TypedOperation extends Operation {
+  type: OperationTypeNode
+}
+
+export type ScalarMap = Record<string, unknown>
