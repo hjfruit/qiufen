@@ -1,3 +1,3 @@
 # graphql-kit-helpers
 
-Collection of helper functions for resolving graphql AST
+Collection of helper functions for graphql-kit
