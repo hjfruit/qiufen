@@ -1,0 +1,36 @@
+{
+  "name": "graphql-kit-server",
+  "version": "0.0.1",
+  "description": "A server with abilities such as Mock and Doc etc",
+  "type": "module",
+  "main": "src/server.js",
+  "module": "src/server.js",
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "bin": {
+    "graphql-kit-server": "./bin/index.js"
+  },
+  "files": [
+    "./bin",
+    "./src",
+    "./doc-site"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@graphql-tools/load": "^7.5.0",
+    "@graphql-tools/mock": "^8.5.0",
+    "@graphql-tools/url-loader": "^7.7.0",
+    "body-parser": "^1.19.1",
+    "chalk": "3.0.0",
+    "dayjs": "^1.10.7",
+    "express": "^4.17.2",
+    "express-graphql": "^0.12.0",
+    "graphql": "^16.2.0",
+    "graphql-playground-html": "^1.6.30",
+    "graphql-tools": "^8.2.0",
+    "http-proxy-middleware": "^2.0.1"
+  },
+  "devDependencies": {}
+}
