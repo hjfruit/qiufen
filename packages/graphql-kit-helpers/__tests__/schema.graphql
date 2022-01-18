@@ -1,28 +1,51 @@
-"""用户信息"""
+"""
+用户信息
+"""
 type User {
-  """id"""
+  """
+  id
+  """
   id: ID!
-  """姓名"""
+  """
+  姓名
+  """
   name: String!
-  """年龄"""
+  """
+  年龄
+  """
   age: Int!
 }
 
-type Query {
-  """根据用户id获取用户信息"""
-  user(userId: ID!): User
-}
-
-input UserModInput {
-  """id"""
+input UserMutationInput {
+  """
+  id
+  """
   id: ID!
-  """姓名"""
+  """
+  姓名
+  """
   name: String
-  """年龄"""
+  """
+  年龄
+  """
   age: Int
 }
 
+type Query {
+  """
+  用户: 根据用户id获取用户信息
+  """
+  user(userId: ID!): User
+}
+
 type Mutation {
-  """用户 : 修改用户信息 : 成功返回true否则返回false"""
-  userMod("""新用户信息"""user: UserModInput): Boolean
+  """
+  用户: 修改用户信息
+  """
+  user(
+    """
+    新用户信息
+    """
+    user: UserMutationInput
+  ): Boolean
 }

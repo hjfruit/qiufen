@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "Collection of helper functions for graphql-kit",
   "main": "dist/index.cjs",
+  "type": "module",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "build": "rollup -c"
   },
   "keywords": [

@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`genGQLStr a gql string for user mutation should be generated 1`] = `
+"# 用户: 修改用户信息
+query user($user: UserMutationInput) {
+  user(user: $user)
+}"
+`;
+
+exports[`genGQLStr a gql string for user query should be generated 1`] = `
+"# 用户: 根据用户id获取用户信息
+query user($userId: ID) {
+  user(userId: $userId) {
+    id
+    name
+    age
+  }
+}"
+`;
+
+exports[`genGQLStrInGroup gql strings for group 用户 should be generated 1`] = `
+"# 用户 
+
+# 根据用户id获取用户信息
+query user($userId: ID) {
+  user(userId: $userId) {
+    id
+    name
+    age
+  }
+}
+
+# 修改用户信息
+mutation user($user: UserMutationInput) {
+  user(user: $user)
+}
+"
+`;
+
+exports[`genVariables a variable for the operation user mutation should be generated 1`] = `
+Object {
+  "user": Object {
+    "age": undefined,
+    "id": undefined,
+    "name": undefined,
+  },
+}
+`;
+
+exports[`genVariables a variable for the operation user query should be generated 1`] = `
+Object {
+  "userId": undefined,
+}
+`;
