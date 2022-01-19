@@ -1,15 +1,15 @@
-import { OperationTypeNode } from 'graphql'
-import {
+import type { OperationTypeNode } from 'graphql'
+import type {
   Operation,
   OperationArgument,
   TypedOperation,
   ScalarMap,
   TypeDef,
-} from './types'
+} from './interface'
 
 /**
  * generate a space string
- * @param count the str length
+ * @param count - the str length
  */
 export const genSpace = (count: number) => {
   return ' '.repeat(count)
@@ -17,7 +17,7 @@ export const genSpace = (count: number) => {
 
 /**
  * generate an outer arguments string
- * @param args the arguments of operation
+ * @param args - the arguments of operation
  */
 const _genOuterArgumentsStr = (args: OperationArgument[]) => {
   if (args.length) {
@@ -28,7 +28,7 @@ const _genOuterArgumentsStr = (args: OperationArgument[]) => {
 
 /**
  * generate an inner arguments string
- * @param args operation's arguments
+ * @param args - operation's arguments
  */
 const _genInnerArgumentsStr = (args: OperationArgument[]) => {
   if (args.length) {
@@ -39,8 +39,8 @@ const _genInnerArgumentsStr = (args: OperationArgument[]) => {
 
 /**
  * generate a typeDef gql
- * @param args the type of operation
- * @param indent the indent of gql
+ * @param args - the type of operation
+ * @param indent - the indent of gql
  */
 const _genTypeDefStr = (typeDef: TypeDef, indent: number) => {
   if (!typeDef) return '\n'
@@ -61,9 +61,9 @@ const _genTypeDefStr = (typeDef: TypeDef, indent: number) => {
 
 /**
  * generate a gql string
- * @param operationType the type of operation
- * @param operation operation which need to be converted into a gql
- * @param indent the indent of gql
+ * @param operationType - the type of operation
+ * @param operation - operation which need to be converted into a gql
+ * @param indent - the indent of gql
  */
 export const genGQLStr = (
   operationType: OperationTypeNode,
@@ -85,8 +85,8 @@ export const genGQLStr = (
 
 /**
  * generate a variables object
- * @param args the arguments of operation
- * @param scalarMap a map contains the default value of scalar type
+ * @param args - the arguments of operation
+ * @param scalarMap - a map contains the default value of scalar type
  */
 export const genVariables = (
   args: OperationArgument[],
@@ -120,8 +120,8 @@ export const genVariables = (
 
 /**
  * generate a group of gqls
- * @param groupName the name of group
- * @param operations the operations in a group
+ * @param groupName - the name of group
+ * @param operations - the operations in a group
  */
 export const genGQLStrInGroup = (
   groupName: string,

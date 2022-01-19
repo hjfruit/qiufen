@@ -1,16 +1,23 @@
 import {
   getNamedType,
-  GraphQLField,
-  GraphQLInputFieldMap,
-  GraphQLNamedType,
-  GraphQLSchema,
   isEnumType,
   isScalarType,
   isUnionType,
   OperationTypeNode,
 } from 'graphql'
-import type { GraphQLFieldMap } from 'graphql'
-import type { FieldTypeDef, Operation, TypedOperation, TypeDef } from './types'
+import type {
+  GraphQLField,
+  GraphQLInputFieldMap,
+  GraphQLNamedType,
+  GraphQLSchema,
+  GraphQLFieldMap,
+} from 'graphql'
+import type {
+  FieldTypeDef,
+  Operation,
+  TypedOperation,
+  TypeDef,
+} from './interface'
 
 /**
  * get type definition from GraphQLFieldMap or GraphQLInputFieldMap instance
@@ -69,8 +76,8 @@ function _getTypeDefFromGraphQLNamedType(namedType: GraphQLNamedType): TypeDef {
 /**
  * TODO:handle circular ref
  * get operation info from a GraphQLField instance
- * @param graphQLField GraphQLField instance from which should be extracted
- * @param schema GraphQLSchema instance
+ * @param graphQLField - GraphQLField instance from which should be extracted
+ * @param schema - GraphQLSchema instance
  */
 export function getOperationFromGraphQLField(
   graphQLField: GraphQLField<unknown, unknown>,
@@ -106,7 +113,7 @@ export function getOperationFromGraphQLField(
 
 /**
  * get all operations by schema
- * @param schema GraphqlSchema instance
+ * @param schema - GraphqlSchema instance
  */
 export function getOperationsBySchema(schema: GraphQLSchema): TypedOperation[] {
   return [
@@ -139,9 +146,9 @@ export function getOperationsBySchema(schema: GraphQLSchema): TypedOperation[] {
 
 /**
  * grouping logic
- * @param operation the operation need to be grouped
+ * @param operation - the operation need to be grouped
  */
-function _group(operation: TypedOperation) {
+const _groupBy: GroupByFn = (operation: TypedOperation) => {
   const [groupName, description] = operation.description.includes(':')
     ? operation.description.split(/:\s*/)
     : ['default', operation.description]
@@ -149,15 +156,22 @@ function _group(operation: TypedOperation) {
   return { groupName, operation: groupOperation }
 }
 
+export interface GroupByFn {
+  (operation: TypedOperation): { groupName: string; operation: TypedOperation }
+}
+
 /**
  * separate operations into some groups
- * @param operations the operations need to be grouped
- * @param group the grouping logic function
+ * @param operations - the operations need to be grouped
+ * @param groupBy - the grouping logic function
  */
-export function groupOperations(operations: TypedOperation[], group = _group) {
+export function groupOperations(
+  operations: TypedOperation[],
+  groupBy: GroupByFn = _groupBy,
+) {
   const groupMap: Record<string, TypedOperation[]> = {}
   operations.forEach(originOperation => {
-    const { groupName, operation } = group(originOperation)
+    const { groupName, operation } = groupBy(originOperation)
     if (groupMap[groupName]) {
       groupMap[groupName].push(operation)
     } else {

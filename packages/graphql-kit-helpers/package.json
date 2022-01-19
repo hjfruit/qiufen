@@ -5,13 +5,13 @@
   "main": "dist/index.cjs",
   "type": "module",
   "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "types": "dist/types.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
-    "build": "rollup -c"
+    "build": "rollup -c && api-extractor run"
   },
   "keywords": [
     "graphql-kit",

@@ -1,6 +1,7 @@
 import ts from 'rollup-plugin-typescript2'
 import cjs from '@rollup/plugin-commonjs'
-import { nodeResolve, DEFAULTS } from '@rollup/plugin-node-resolve'
+import { nodeResolve } from '@rollup/plugin-node-resolve'
+import del from 'rollup-plugin-delete'
 import pkg from './package.json'
 
 export default {
@@ -21,9 +22,12 @@ export default {
   ],
   plugins: [
     cjs(),
-    nodeResolve({
-      extensions: [...DEFAULTS.extensions, 'ts'],
+    nodeResolve(),
+    ts({
+      tsconfigOverride: {
+        exclude: ['**/__tests__/**'],
+      },
     }),
-    ts(),
+    del({ targets: 'dist/*', verbose: true }),
   ],
 }

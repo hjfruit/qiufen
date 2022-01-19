@@ -6,7 +6,8 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:react/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
     'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
@@ -18,6 +19,24 @@ module.exports = {
     ecmaVersion: 13,
     sourceType: 'module',
   },
-  plugins: ['react', '@typescript-eslint'],
-  rules: {},
+  plugins: ['import', '@typescript-eslint'],
+  rules: {
+    'import/first': 1,
+    'import/order': [
+      1,
+      {
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+          'index',
+          'object',
+          'type',
+        ],
+      },
+    ],
+    '@typescript-eslint/consistent-type-imports': 1,
+  },
 }

@@ -1,4 +1,4 @@
-import { ConstDirectiveNode, OperationTypeNode } from 'graphql'
+import type { ConstDirectiveNode, OperationTypeNode } from 'graphql'
 
 export type Directive = ConstDirectiveNode
 
