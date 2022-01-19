@@ -5,7 +5,7 @@ import chalk from 'chalk'
 import createGraphqlController from './graphqlController'
 import createDocController from './docController'
 import getIPAddress from './utils/getIPAddress'
-import type { GraphqlKitConfig } from './types'
+import type { GraphqlKitConfig } from './interface'
 import type { Server } from 'http'
 
 const require = createRequire(import.meta.url)

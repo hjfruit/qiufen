@@ -3,18 +3,19 @@
   "version": "0.0.1",
   "description": "A server with abilities such as Mock and Doc etc",
   "type": "module",
-  "main": "src/server.js",
-  "module": "src/server.js",
+  "main": "dist/server.cjs",
+  "types": "dist/server.d.ts",
+  "module": "dist/server.mjs",
   "scripts": {
-    "tsc": "tsc"
+    "build": "rollup -c"
   },
   "bin": {
-    "graphql-kit-server": "./bin/index.js"
+    "graphql-kit-server": "bin/index.js"
   },
   "files": [
-    "./bin",
-    "./src",
-    "./doc-site"
+    "bin",
+    "dist",
+    "doc-site"
   ],
   "author": "changhuali <changhua.li.cq@gmail.com>",
   "license": "MIT",
@@ -33,7 +34,5 @@
     "http-proxy-middleware": "^2.0.1",
     "@graphql-kit/helpers": "0.0.1"
   },
-  "devDependencies": {
-    "@types/express": "^4.17.13"
-  }
+  "devDependencies": {}
 }

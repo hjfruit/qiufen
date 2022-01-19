@@ -1,12 +1,12 @@
 import { readFileSync } from 'fs'
 import { URL } from 'url'
 import { buildSchema, OperationTypeNode } from 'graphql'
-import { genSpace, genGQLStr, genGQLStrInGroup, genVariables } from '@/src/gql'
 import {
   getOperationFromGraphQLField,
   getOperationsBySchema,
   groupOperations,
-} from '@/src/operation'
+} from '../src/operation'
+import { genSpace, genGQLStr, genGQLStrInGroup, genVariables } from '../src/gql'
 
 /********** genSpace start **********/
 describe('genSpace', () => {

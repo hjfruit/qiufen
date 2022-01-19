@@ -15,7 +15,7 @@ import type {
   GraphqlKitConfig,
   IncomingMessageWithBody,
   PlaygroundQuery,
-} from './types'
+} from './interface'
 import type { GraphQLSchema, OperationTypeNode } from 'graphql'
 const BASE_PATH = '/graphql'
 

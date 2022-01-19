@@ -10,8 +10,13 @@
     "dist"
   ],
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
-    "build": "rollup -c && api-extractor run"
+    "test": "NODE_OPTIONS=--experimental-vm-modules yarn jest",
+    "clean": "rimraf dist temp",
+    "lint": "eslint",
+    "build-bundle": "rollup -c",
+    "build-dts": "tsc --emitDeclarationOnly --declaration --outDir temp",
+    "build-types": "yarn build-dts && api-extractor run && rimraf temp",
+    "build": "run-s clean lint build-bundle build-types"
   },
   "keywords": [
     "graphql-kit",
