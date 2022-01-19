@@ -1,13 +1,12 @@
+import { createRequire } from 'module'
 import express from 'express'
 import bodyParser from 'body-parser'
 import chalk from 'chalk'
-import { createRequire } from 'module'
-
-import createGraphqlController from './graphqlController.js'
-import createDocController from './docController.js'
-import { getIPAddress } from './utils/common.js'
-import { Server } from 'http'
-import { GraphqlKitConfig } from './types'
+import createGraphqlController from './graphqlController'
+import createDocController from './docController'
+import getIPAddress from './utils/getIPAddress'
+import type { GraphqlKitConfig } from './types'
+import type { Server } from 'http'
 
 const require = createRequire(import.meta.url)
 

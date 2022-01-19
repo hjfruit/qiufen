@@ -1,5 +1,5 @@
-import { Tab } from "graphql-playground-html/dist/render-playground-page";
-import type { IncomingMessage } from "http";
+import type { Tab } from 'graphql-playground-html/dist/render-playground-page'
+import type { IncomingMessage } from 'http'
 
 export interface IncomingMessageWithBody extends IncomingMessage {
   body?: unknown

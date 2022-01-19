@@ -1,5 +1,5 @@
 {
-  "name": "graphql-kit-server",
+  "name": "@graphql-kit/server",
   "version": "0.0.1",
   "description": "A server with abilities such as Mock and Doc etc",
   "type": "module",
@@ -16,7 +16,7 @@
     "./src",
     "./doc-site"
   ],
-  "author": "",
+  "author": "changhuali <changhua.li.cq@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@graphql-tools/load": "^7.5.0",
@@ -30,7 +30,10 @@
     "graphql": "^16.2.0",
     "graphql-playground-html": "^1.6.30",
     "graphql-tools": "^8.2.0",
-    "http-proxy-middleware": "^2.0.1"
+    "http-proxy-middleware": "^2.0.1",
+    "@graphql-kit/helpers": "0.0.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/express": "^4.17.13"
+  }
 }

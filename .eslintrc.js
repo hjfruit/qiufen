@@ -21,7 +21,7 @@ module.exports = {
   },
   plugins: ['import', '@typescript-eslint'],
   rules: {
-    'import/no-unresolved': [2, { ignore: ['^@/'] }],
+    'import/no-unresolved': [2, { ignore: ['^@/', 'dist'] }],
     'import/first': 1,
     'import/order': [
       1,

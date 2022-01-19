@@ -1,7 +1,7 @@
 import fs from 'fs'
 import express from 'express'
 import { graphqlHTTP } from 'express-graphql'
-import { buildSchema, GraphQLSchema, OperationTypeNode } from 'graphql'
+import { buildSchema } from 'graphql'
 import { addMocksToSchema } from '@graphql-tools/mock'
 import { UrlLoader } from '@graphql-tools/url-loader'
 import { loadSchema } from '@graphql-tools/load'
@@ -10,8 +10,13 @@ import { createProxyMiddleware } from 'http-proxy-middleware'
 import chalk from 'chalk'
 import { renderPlaygroundPage } from 'graphql-playground-html'
 import dayjs from 'dayjs'
-import { extractOperationInfoFromGraphQLField } from './utils/graphql'
-import { GraphqlKitConfig, IncomingMessageWithBody, PlaygroundQuery } from './types'
+import { getOperationFromGraphQLField } from '@graphql-kit/helpers'
+import type {
+  GraphqlKitConfig,
+  IncomingMessageWithBody,
+  PlaygroundQuery,
+} from './types'
+import type { GraphQLSchema, OperationTypeNode } from 'graphql'
 const BASE_PATH = '/graphql'
 
 /**
@@ -77,10 +82,7 @@ const createGraphqlController = async (
     if (!operationField) {
       res.status(404).end('Not found')
     } else {
-      const result = extractOperationInfoFromGraphQLField(
-        operationField,
-        rawSchema,
-      )
+      const result = getOperationFromGraphQLField(operationField, rawSchema)
       res.send(result)
     }
   })
@@ -110,18 +112,18 @@ const createGraphqlController = async (
     const result = {
       query: Object.values(rawSchema.getQueryType()?.getFields() || {}).map(
         operationField => {
-          return extractOperationInfoFromGraphQLField(operationField, rawSchema)
+          return getOperationFromGraphQLField(operationField, rawSchema)
         },
       ),
       mutation: Object.values(
         rawSchema.getMutationType()?.getFields() || {},
       ).map(operationField => {
-        return extractOperationInfoFromGraphQLField(operationField, rawSchema)
+        return getOperationFromGraphQLField(operationField, rawSchema)
       }),
       subscription: Object.values(
         rawSchema.getSubscriptionType()?.getFields() || {},
       ).map(operationField => {
-        return extractOperationInfoFromGraphQLField(operationField, rawSchema)
+        return getOperationFromGraphQLField(operationField, rawSchema)
       }),
     }
     res.send({

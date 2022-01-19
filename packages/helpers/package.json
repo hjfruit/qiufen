@@ -1,6 +1,6 @@
 {
-  "name": "graphql-kit-helpers",
-  "version": "1.0.0",
+  "name": "@graphql-kit/helpers",
+  "version": "0.0.1",
   "description": "Collection of helper functions for graphql-kit",
   "main": "dist/index.cjs",
   "type": "module",
@@ -17,12 +17,10 @@
     "graphql-kit",
     "helpers"
   ],
-  "author": "changhuali",
+  "author": "changhuali <changhua.li.cq@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "graphql": "^16.2.0"
   },
-  "devDependencies": {
-    "@types/express": "^4.17.13"
-  }
+  "devDependencies": {}
 }
