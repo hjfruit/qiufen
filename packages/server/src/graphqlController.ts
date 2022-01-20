@@ -21,8 +21,8 @@ const BASE_PATH = '/graphql'
 
 /**
  * create a graphql controller
- * @param {import('./server').} config
- * @param {string} ip
+ * @param config
+ * @param ip
  */
 const createGraphqlController = async (
   config: GraphqlKitConfig,

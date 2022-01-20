@@ -6,10 +6,11 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "lib": ["ESNext"],
-    "strict": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "strict": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noEmitOnError": true

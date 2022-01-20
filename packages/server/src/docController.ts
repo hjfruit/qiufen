@@ -3,6 +3,7 @@ import type { Express } from 'express'
 
 /**
  * create a doc controller
+ * @param app Express instance
  */
 const createDocController = (app: Express) => {
   const router = express.Router()

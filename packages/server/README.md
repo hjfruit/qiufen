@@ -1,1 +1,1 @@
-# graphql-kit
+# @graphql-kit/server

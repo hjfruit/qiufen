@@ -12,7 +12,7 @@ const require = createRequire(import.meta.url)
 
 /**
  * start graphql server
- * @param {string} configPath the absolute path of config file
+ * @param configPath - the absolute path of config file
  */
 const startServer = (configPath: string): Promise<Server> => {
   delete require.cache[configPath]
