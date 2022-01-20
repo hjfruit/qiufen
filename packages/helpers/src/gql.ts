@@ -1,6 +1,4 @@
-import type { OperationTypeNode } from 'graphql'
 import type {
-  Operation,
   OperationArgument,
   TypedOperation,
   ScalarMap,
@@ -61,20 +59,15 @@ const _genTypeDefStr = (typeDef: TypeDef, indent: number) => {
 
 /**
  * generate a gql string
- * @param operationType - the type of operation
  * @param operation - operation which need to be converted into a gql
  * @param indent - the indent of gql
  */
-export const genGQLStr = (
-  operationType: OperationTypeNode,
-  operation: Operation,
-  indent = 2,
-) => {
+export const genGQLStr = (operation: TypedOperation, indent = 2) => {
   const returnTypeDef = operation.return.typeDef
   const descriptionStr = operation.description
     ? `# ${operation.description}\n`
     : ''
-  return `${descriptionStr}${operationType}${genSpace(1)}${
+  return `${descriptionStr}${operation.type}${genSpace(1)}${
     operation.name
   }${_genOuterArgumentsStr(operation.arguments)}${genSpace(1)}{\n${genSpace(
     indent,
@@ -127,8 +120,8 @@ export const genGQLStrInGroup = (
   groupName: string,
   operations: TypedOperation[],
 ) => {
-  return operations.reduce((str, { type, ...operation }, index) => {
+  return operations.reduce((str, operation, index) => {
     const isLast = index === operations.length - 1
-    return str + genGQLStr(type, operation) + (isLast ? '\n' : '\n\n')
+    return str + genGQLStr(operation) + (isLast ? '\n' : '\n\n')
   }, `# ${groupName} \n\n`)
 }

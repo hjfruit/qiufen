@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs'
 import { URL } from 'url'
-import { buildSchema, OperationTypeNode } from 'graphql'
+import { OperationTypeNode, buildSchema } from 'graphql'
 import {
   getOperationFromGraphQLField,
   getOperationsBySchema,
@@ -28,15 +28,19 @@ const operationsAfterBeingGrouped = groupOperations(allOperations)
 
 describe('genGQLStr', () => {
   const fieldsMap = {
-    query: schema.getQueryType()?.getFields() || {},
-    mutation: schema.getMutationType()?.getFields() || {},
-    subscription: schema.getSubscriptionType()?.getFields() || {},
+    [OperationTypeNode.QUERY]: schema.getQueryType()?.getFields() || {},
+    [OperationTypeNode.MUTATION]: schema.getMutationType()?.getFields() || {},
+    [OperationTypeNode.SUBSCRIPTION]:
+      schema.getSubscriptionType()?.getFields() || {},
   }
   Object.entries(fieldsMap).forEach(([operationType, graphQLFields]) => {
     Object.values(graphQLFields).forEach(graphQLField => {
       it(`a gql string for ${graphQLField.name} ${operationType} should be generated`, () => {
         const operation = getOperationFromGraphQLField(graphQLField, schema)
-        const gqlString = genGQLStr(OperationTypeNode.QUERY, operation)
+        const gqlString = genGQLStr({
+          type: operationType as OperationTypeNode,
+          ...operation,
+        })
         expect(gqlString).toMatchSnapshot()
       })
     })

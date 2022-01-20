@@ -2,7 +2,7 @@
 
 exports[`genGQLStr a gql string for user mutation should be generated 1`] = `
 "# 用户: 修改用户信息
-query user($user: UserMutationInput) {
+mutation user($user: UserMutationInput) {
   user(user: $user)
 }"
 `;
