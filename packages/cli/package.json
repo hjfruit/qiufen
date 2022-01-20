@@ -1,0 +1,47 @@
+{
+  "name": "@graphql-kit/cli",
+  "version": "0.0.1",
+  "description": "A cli for graphql-kit",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/types.d.ts",
+  "files": [
+    "bin",
+    "dist"
+  ],
+  "bin": {
+    "gk": "bin/index.js"
+  },
+  "scripts": {
+    "dev": "npm run clean && rollup -c -w",
+    "cli": "node ./dist/index.cjs",
+    "test": "NODE_OPTIONS=--experimental-vm-modules yarn jest",
+    "clean": "rimraf dist temp",
+    "lint": "eslint",
+    "build-bundle": "rollup -c",
+    "build-dts": "tsc --emitDeclarationOnly --declaration --outDir temp",
+    "build-types": "yarn build-dts && api-extractor run && rimraf temp",
+    "build": "run-s clean lint build-bundle build-types"
+  },
+  "keywords": [
+    "graphql-kit",
+    "cli"
+  ],
+  "author": "changhuali <changhua.li.cq@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@graphql-kit/cli": "/Users/hjmac04/Desktop/graphql-kit/packages/cli",
+    "@graphql-kit/server": "0.0.1",
+    "chalk": "3.0.0",
+    "commander": "^8.3.0",
+    "deepmerge": "^4.2.2",
+    "inquirer": "^8.2.0",
+    "serialize-javascript": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^8.1.3",
+    "@types/serialize-javascript": "^5.0.2",
+    "@types/stringify-object": "^4.0.1",
+    "stringify-object": "3.0.0"
+  }
+}

@@ -30,20 +30,13 @@ const createGraphqlController = async (
 ) => {
   const router = express.Router()
 
-  const {
-    port,
-    endpoint,
-    schemaPolicy,
-    remoteSchemaUrl,
-    localSchemaFile,
-    mock,
-  } = config
+  const { port, endpoint, schemaPolicy, localSchemaFile, mock } = config
 
   // get raw schema
   async function getRawSchema() {
     if (schemaPolicy === 'remote') {
       try {
-        return await loadSchema(remoteSchemaUrl, {
+        return await loadSchema(endpoint.url, {
           loaders: [new UrlLoader()],
         })
       } catch (err) {

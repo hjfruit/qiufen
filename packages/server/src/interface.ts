@@ -42,8 +42,6 @@ export interface GraphqlKitConfig {
   }
   /** local graphql schema file path */
   localSchemaFile: string
-  /** remote graphql service url */
-  remoteSchemaUrl: string
   /** use either local schema or remote schema */
   schemaPolicy: SchemaPolicy
   /** mock config */
