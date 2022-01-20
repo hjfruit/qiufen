@@ -5,18 +5,17 @@ import { buildSchema } from 'graphql'
 import { addMocksToSchema } from '@graphql-tools/mock'
 import { UrlLoader } from '@graphql-tools/url-loader'
 import { loadSchema } from '@graphql-tools/load'
-import { getRootTypeMap } from '@graphql-tools/utils'
 import { createProxyMiddleware } from 'http-proxy-middleware'
 import chalk from 'chalk'
 import { renderPlaygroundPage } from 'graphql-playground-html'
 import dayjs from 'dayjs'
-import { getOperationFromGraphQLField } from '@graphql-kit/helpers'
+import { getOperationsBySchema } from '@graphql-kit/helpers'
 import type {
   GraphqlKitConfig,
   IncomingMessageWithBody,
   PlaygroundQuery,
 } from './interface'
-import type { GraphQLSchema, OperationTypeNode } from 'graphql'
+import type { GraphQLSchema } from 'graphql'
 const BASE_PATH = '/graphql'
 
 /**
@@ -40,7 +39,11 @@ const createGraphqlController = async (
           loaders: [new UrlLoader()],
         })
       } catch (err) {
-        console.warn(chalk.yellow('远程schema加载失败，将尝试加载本地schema'))
+        console.warn(
+          chalk.yellow(
+            'there is an error when loading a remote schema, it will try to load local schema',
+          ),
+        )
       }
     }
     const localSchemaString = fs.readFileSync(localSchemaFile, {
@@ -64,22 +67,7 @@ const createGraphqlController = async (
     schema: mockedSchema,
   }
 
-  // query specific query operation info in a JSON format
-  router.use(`${BASE_PATH}/:operation/:name`, async (req, res) => {
-    const rawSchema = await getRawSchema()
-    const operation = req.params.operation as OperationTypeNode
-    const operationField = getRootTypeMap(rawSchema)
-      .get(operation)
-      ?.getFields()[req.params.name]
-
-    if (!operationField) {
-      res.status(404).end('Not found')
-    } else {
-      const result = getOperationFromGraphQLField(operationField, rawSchema)
-      res.send(result)
-    }
-  })
-
+  // serve a playground
   router.get(`${BASE_PATH}/playground`, (req, res) => {
     res.setHeader('Content-Type', 'text/html')
     const { query, variables } = req.query as PlaygroundQuery
@@ -99,26 +87,10 @@ const createGraphqlController = async (
     res.end(playground)
   })
 
-  // query all operations
-  router.use(`${BASE_PATH}/operation`, async (req, res) => {
+  // serve operations
+  router.use(`${BASE_PATH}/operations`, async (req, res) => {
     const rawSchema = await getRawSchema()
-    const result = {
-      query: Object.values(rawSchema.getQueryType()?.getFields() || {}).map(
-        operationField => {
-          return getOperationFromGraphQLField(operationField, rawSchema)
-        },
-      ),
-      mutation: Object.values(
-        rawSchema.getMutationType()?.getFields() || {},
-      ).map(operationField => {
-        return getOperationFromGraphQLField(operationField, rawSchema)
-      }),
-      subscription: Object.values(
-        rawSchema.getSubscriptionType()?.getFields() || {},
-      ).map(operationField => {
-        return getOperationFromGraphQLField(operationField, rawSchema)
-      }),
-    }
+    const result = getOperationsBySchema(rawSchema)
     res.send({
       code: 200,
       message: '请求成功',
@@ -126,8 +98,8 @@ const createGraphqlController = async (
     })
   })
 
-  // reload schema
-  router.use(`${BASE_PATH}/reload`, async (req, res) => {
+  // serve a way to refresh schema
+  router.use(`${BASE_PATH}/refresh`, async (req, res) => {
     try {
       graphqlHTTPOptions.schema = getMockedSchema(await getRawSchema())
       res.status(200)
@@ -136,7 +108,7 @@ const createGraphqlController = async (
         chalk.green(
           `[${req.socket.remoteAddress}]`,
           dayjs().format('HH:mm:ss'),
-          '刷新schema成功',
+          'refresh successful',
         ),
       )
     } catch (err) {
@@ -145,12 +117,13 @@ const createGraphqlController = async (
         chalk.red(
           `[${req.socket.remoteAddress}]`,
           dayjs().format('HH:mm:ss'),
-          '刷新schema失败',
+          'refresh failed',
         ),
       )
     }
   })
 
+  // serve a proxy service
   const proxyMiddleware = createProxyMiddleware({
     target: endpoint.url,
     pathRewrite: {
@@ -165,7 +138,7 @@ const createGraphqlController = async (
       }
     },
   })
-  router.use(BASE_PATH, (req, res, next) => {
+  router.post(BASE_PATH, (req, res, next) => {
     if (
       mock.enable &&
       (mock.whiteList === '...' ||
@@ -175,7 +148,7 @@ const createGraphqlController = async (
         chalk.red(
           `[${req.socket.remoteAddress}]`,
           dayjs().format('HH:mm:ss'),
-          '请求mock数据 --------------- ',
+          'target: mock ',
           req.body.operationName,
         ),
       )
@@ -185,7 +158,7 @@ const createGraphqlController = async (
         chalk.red(
           `[${req.socket.remoteAddress}]`,
           dayjs().format('HH:mm:ss'),
-          '请求后端数据 --------------- ',
+          'target: backend ',
           req.body.operationName,
         ),
       )
