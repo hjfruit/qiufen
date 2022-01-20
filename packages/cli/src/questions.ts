@@ -2,6 +2,7 @@ import type { GraphqlKitConfig } from '@/../server/dist/types'
 
 type Answers = GraphqlKitConfig
 
+// questions for config initialization wizard
 export const initQs = [
   {
     type: 'input',

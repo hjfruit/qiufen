@@ -14,6 +14,7 @@ import defaultConfig from './config'
 const program = new Command()
 program.version(version)
 
+// create a init command
 program
   .command('init')
   .description('run config initialization wizard')
@@ -40,6 +41,7 @@ program
     })
   })
 
+// create a start command
 program
   .command('start')
   .description('start a graphql server')

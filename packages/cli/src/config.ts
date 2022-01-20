@@ -1,5 +1,6 @@
 import type { GraphqlKitConfig } from '@graphql-kit/server'
 
+// default config for graphql-kit
 const config: GraphqlKitConfig = {
   port: 9406,
   endpoint: {

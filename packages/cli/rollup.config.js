@@ -20,14 +20,5 @@ export default {
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
   ],
-  plugins: [
-    cjs(),
-    nodeResolve(),
-    json(),
-    ts({
-      tsconfigOverride: {
-        exclude: ['**/__tests__/**'],
-      },
-    }),
-  ],
+  plugins: [cjs(), nodeResolve(), json(), ts()],
 }
