@@ -31,12 +31,10 @@
     "chalk": "3.0.0",
     "commander": "^8.3.0",
     "deepmerge": "^4.2.2",
-    "inquirer": "^8.2.0",
-    "serialize-javascript": "^6.0.0"
+    "inquirer": "^8.2.0"
   },
   "devDependencies": {
     "@types/inquirer": "^8.1.3",
-    "@types/serialize-javascript": "^5.0.2",
     "@types/stringify-object": "^4.0.1",
     "stringify-object": "3.0.0"
   }

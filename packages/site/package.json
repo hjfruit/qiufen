@@ -1,0 +1,33 @@
+{
+  "name": "@graphql-kit/site",
+  "description": "A doc site for graphql",
+  "version": "0.0.1",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "dev": "next dev",
+    "clean": "rimraf dist temp",
+    "lint": "eslint",
+    "build-bundle": "next build && rollup -c",
+    "build-dts": "tsc server.ts --emitDeclarationOnly --declaration --skipLibCheck --noEmit false --outDir temp",
+    "build-types": "yarn build-dts && api-extractor run && rimraf temp",
+    "build": "run-s clean lint build-bundle build-types",
+    "start": "next start"
+  },
+  "files": [
+    "dist",
+    ".next"
+  ],
+  "author": "changhuali <changhua.li.cq@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "next": "12.0.8"
+  },
+  "devDependencies": {
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "@types/react": "17.0.38",
+    "eslint-config-next": "12.0.8"
+  }
+}

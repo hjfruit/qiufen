@@ -1,4 +1,5 @@
 import express from 'express'
+import { createNextServer } from '@graphql-kit/site'
 import type { Express } from 'express'
 
 /**
@@ -8,10 +9,9 @@ import type { Express } from 'express'
 const createDocController = (app: Express) => {
   const router = express.Router()
 
-  app.use(express.static(new URL('../doc-site', import.meta.url).pathname))
-
+  const handle = createNextServer({}).getRequestHandler()
   router.get('*', (req, res) => {
-    res.sendFile(new URL('../doc-site/index.html', import.meta.url).pathname)
+    return handle(req, res)
   })
 
   return router
