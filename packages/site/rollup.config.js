@@ -5,7 +5,7 @@ import json from '@rollup/plugin-json'
 import pkg from './package.json'
 
 export default {
-  input: 'server.ts',
+  input: 'src/server.ts',
   output: [
     {
       file: pkg.main,

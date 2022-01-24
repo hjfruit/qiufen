@@ -1,0 +1,47 @@
+.page {
+  padding-top: @header-height;
+  background-color: #e6e8ec;
+}
+.header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: @header-height;
+  display: flex;
+  align-items: center;
+  padding: 0 @space-large;
+  border-bottom: 1px solid #eee;
+  background-color: #fff;
+  z-index: @header-zIndex;
+  box-shadow: 0 2px 8px #f0f1f2;
+  background: url(~@/assets/graph-wash.png);
+  background-size: 100% 100%;
+  background-position: left top;
+  background-color: #171e26;
+  color: #fff;
+}
+.logo {
+  height: 32px;
+  line-height: 32px;
+}
+.appName {
+  margin-left: @space-small;
+  font-weight: bold;
+}
+.nav {
+  margin-left: @space-large;
+  display: flex;
+  align-items: center;
+  a {
+    height: 100%;
+    padding: 0 16px;
+    font-size: 15px;
+    color: #fff;
+    text-decoration: none;
+  }
+  a.active {
+    font-weight: 500;
+    color: #e10098;
+  }
+}
