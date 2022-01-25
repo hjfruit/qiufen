@@ -1,5 +1,0 @@
-{
-  "c": ["pages/docs", "webpack"],
-  "r": [],
-  "m": ["../../node_modules/ace-builds/src-noconflict/mode-json5.js"]
-}

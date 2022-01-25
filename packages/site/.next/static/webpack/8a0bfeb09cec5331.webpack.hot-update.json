@@ -1,5 +1,0 @@
-{
-  "c": ["pages/docs", "webpack"],
-  "r": ["node_modules_ace-builds_src-noconflict_theme-solarized_dark_js"],
-  "m": ["../../node_modules/ace-builds/src-noconflict/theme-solarized_dark.js"]
-}
