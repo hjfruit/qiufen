@@ -17,6 +17,8 @@ import type {
   Operation,
   TypedOperation,
   TypeDef,
+  OperationArgument,
+  ScalarMap,
 } from './interface'
 
 /**
@@ -179,4 +181,44 @@ export function groupOperations(
     }
   })
   return groupMap
+}
+
+/**
+ * generate a variables object
+ * @param args - the arguments of operation
+ * @param scalarMap - a map contains the default value of scalar type
+ */
+export const genVariables = (
+  args: OperationArgument[],
+  scalarMap: ScalarMap,
+) => {
+  const variables: Record<string, unknown> = {}
+  args.forEach(({ name, type, typeDef }) => {
+    let defaultValue
+    if (!typeDef) {
+      // scalar type
+      const valueHandler = scalarMap[type]
+      defaultValue = valueHandler
+        ? typeof valueHandler === 'function'
+          ? valueHandler()
+          : valueHandler
+        : null
+    } else if (Array.isArray(typeDef)) {
+      // enum type
+      defaultValue = typeDef[0].value
+    } else {
+      // object type
+      const subArgs = Object.entries(typeDef).map(
+        ([fieldName, fieldTypeDef]) => {
+          return {
+            name: fieldName,
+            ...fieldTypeDef,
+          }
+        },
+      )
+      defaultValue = genVariables(subArgs, scalarMap)
+    }
+    variables[name] = defaultValue
+  })
+  return variables
 }

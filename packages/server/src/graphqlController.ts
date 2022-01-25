@@ -7,15 +7,15 @@ import { UrlLoader } from '@graphql-tools/url-loader'
 import { loadSchema } from '@graphql-tools/load'
 import { createProxyMiddleware } from 'http-proxy-middleware'
 import chalk from 'chalk'
-import { renderPlaygroundPage } from 'graphql-playground-html'
 import dayjs from 'dayjs'
-import { getOperationsBySchema } from '@graphql-kit/helpers'
-import type {
-  GraphqlKitConfig,
-  IncomingMessageWithBody,
-  PlaygroundQuery,
-} from './interface'
-import type { GraphQLSchema } from 'graphql'
+import {
+  genGQLStr,
+  genVariables,
+  getOperationsBySchema,
+} from '@graphql-kit/helpers'
+import expressPlayground from 'graphql-playground-middleware-express'
+import type { GraphqlKitConfig, IncomingMessageWithBody } from './interface'
+import type { GraphQLSchema, OperationTypeNode } from 'graphql'
 const BASE_PATH = '/graphql'
 
 /**
@@ -62,29 +62,44 @@ const createGraphqlController = async (
     return addMocksToSchema({ schema, mocks: mock.typeMapper, resolvers })
   }
 
-  const mockedSchema = getMockedSchema(await getRawSchema())
+  const rawSchema = await getRawSchema()
+  const mockedSchema = getMockedSchema(rawSchema)
   const graphqlHTTPOptions = {
     schema: mockedSchema,
   }
 
   // serve a playground
-  router.get(`${BASE_PATH}/playground`, (req, res) => {
-    res.setHeader('Content-Type', 'text/html')
-    const { query, variables } = req.query as PlaygroundQuery
+  router.get(`${BASE_PATH}/playground`, (req, res, next) => {
+    const { operationType, operationName } = req.query as {
+      operationType: OperationTypeNode
+      operationName: string
+    }
+    const operation = getOperationsBySchema(rawSchema).find(
+      item => item.name === operationName && item.type === operationType,
+    )
+    if (!operation) {
+      res.json({
+        status: 404,
+        message: `${operationType} ${operationName} is not found`,
+      })
+      return
+    }
+    const query = genGQLStr(operation)
+    const variables = genVariables(operation.arguments, config.mock.typeMapper)
     const endpoint = `http://${ip}:${port}${BASE_PATH}`
-    const playground = renderPlaygroundPage({
+    const playgroundOptions = {
       endpoint,
       tabs: [
         {
-          name: '调试',
+          name: 'debug',
           endpoint,
           query,
-          variables,
+          variables: JSON.stringify(variables, null, 2),
           headers: mock.headers,
         },
       ],
-    })
-    res.end(playground)
+    }
+    expressPlayground(playgroundOptions)(req, res, next)
   })
 
   // serve operations
@@ -93,7 +108,7 @@ const createGraphqlController = async (
     const result = getOperationsBySchema(rawSchema)
     res.send({
       code: 200,
-      message: '请求成功',
+      message: 'success',
       data: result,
     })
   })

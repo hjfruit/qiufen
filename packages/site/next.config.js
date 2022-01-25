@@ -4,8 +4,19 @@ const withAntdLess = require('next-plugin-antd-less')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = withAntdLess({
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/docs',
+        permanent: true,
+      },
+    ]
+  },
   reactStrictMode: true,
-  modifyVars: {},
+  modifyVars: {
+    'primary-color': '#e10098',
+  },
   lessVarsFilePath: path.resolve('src/styles/variables.less'),
   webpack: config => {
     config.plugins = [...config.plugins]

@@ -1,9 +1,4 @@
-import type {
-  OperationArgument,
-  TypedOperation,
-  ScalarMap,
-  TypeDef,
-} from './interface'
+import type { OperationArgument, TypedOperation, TypeDef } from './interface'
 
 /**
  * generate a space string
@@ -74,41 +69,6 @@ export const genGQLStr = (operation: TypedOperation, indent = 2) => {
   )}${operation.name}${_genInnerArgumentsStr(operation.arguments)}${
     returnTypeDef ? _genTypeDefStr(returnTypeDef, indent + indent) : '\n'
   }}`
-}
-
-/**
- * generate a variables object
- * @param args - the arguments of operation
- * @param scalarMap - a map contains the default value of scalar type
- */
-export const genVariables = (
-  args: OperationArgument[],
-  scalarMap: ScalarMap,
-) => {
-  const variables: Record<string, unknown> = {}
-  args.forEach(({ name, type, typeDef }) => {
-    let defaultValue
-    if (!typeDef) {
-      // scalar type
-      defaultValue = scalarMap[type]
-    } else if (Array.isArray(typeDef)) {
-      // enum type
-      defaultValue = typeDef[0].value
-    } else {
-      // object type
-      const subArgs = Object.entries(typeDef).map(
-        ([fieldName, fieldTypeDef]) => {
-          return {
-            name: fieldName,
-            ...fieldTypeDef,
-          }
-        },
-      )
-      defaultValue = genVariables(subArgs, scalarMap)
-    }
-    variables[name] = defaultValue
-  })
-  return variables
 }
 
 /**

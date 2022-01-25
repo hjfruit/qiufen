@@ -5,8 +5,9 @@ import {
   getOperationFromGraphQLField,
   getOperationsBySchema,
   groupOperations,
+  genVariables,
 } from '../src/operation'
-import { genSpace, genGQLStr, genGQLStrInGroup, genVariables } from '../src/gql'
+import { genSpace, genGQLStr, genGQLStrInGroup } from '../src/gql'
 
 /********** genSpace start **********/
 describe('genSpace', () => {

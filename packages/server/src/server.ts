@@ -37,7 +37,7 @@ const startServer = (configPath: string): Promise<Server> => {
       const graphqlController = await createGraphqlController(config, ip)
       app.use(graphqlController)
 
-      const docController = await createDocController(app)
+      const docController = await createDocController()
       app.use(docController)
 
       const server = app.listen(port, '0.0.0.0', () => {

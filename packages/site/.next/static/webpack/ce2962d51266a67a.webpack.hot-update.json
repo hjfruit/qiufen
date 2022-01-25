@@ -1,0 +1,5 @@
+{
+  "c": ["pages/docs", "webpack"],
+  "r": [],
+  "m": ["../../node_modules/ace-builds/src-noconflict/theme-solarized_dark.js"]
+}
