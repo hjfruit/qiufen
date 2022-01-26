@@ -16,7 +16,7 @@
     "build-bundle": "rollup -c",
     "build-dts": "tsc --emitDeclarationOnly --declaration --outDir temp",
     "build-types": "yarn build-dts && api-extractor run && rimraf temp",
-    "build": "run-s clean lint build-bundle build-types"
+    "build": "run-s clean lint test build-bundle build-types"
   },
   "keywords": [
     "graphql-kit",
