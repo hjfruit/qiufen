@@ -37,14 +37,17 @@ function _getObjectTypeDefFromGraphQLFieldMap(
     const typeName = namedType.name
     // handle circular ref
     const refCount = refChain.filter(item => item === typeName).length
+    if (refCount > 2) {
+      return
+    }
     result[fieldName] = {
       description: field.description || '',
       type: namedType.name,
       directives: field.astNode?.directives || [],
-      typeDef:
-        refCount > 2
-          ? undefined
-          : _getTypeDefFromGraphQLNamedType(namedType, [...refChain, typeName]),
+      typeDef: _getTypeDefFromGraphQLNamedType(namedType, [
+        ...refChain,
+        typeName,
+      ]),
     }
   })
   return result
