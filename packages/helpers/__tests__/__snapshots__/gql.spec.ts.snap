@@ -1,5 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`genExampleValue a response for the operation user mutation should be generated 1`] = `
+Object {
+  "user": null,
+}
+`;
+
+exports[`genExampleValue a response for the operation user query should be generated 1`] = `
+Object {
+  "user": Object {
+    "age": null,
+    "id": null,
+    "name": null,
+  },
+}
+`;
+
+exports[`genExampleValue a variable for the operation user mutation should be generated 1`] = `
+Object {
+  "user": Object {
+    "age": null,
+    "id": null,
+    "name": null,
+  },
+}
+`;
+
+exports[`genExampleValue a variable for the operation user query should be generated 1`] = `
+Object {
+  "userId": null,
+}
+`;
+
 exports[`genGQLStr a gql string for user mutation should be generated 1`] = `
 "# 用户: 修改用户信息
 mutation user($user: UserMutationInput) {
@@ -35,20 +67,4 @@ mutation user($user: UserMutationInput) {
   user(user: $user)
 }
 "
-`;
-
-exports[`genVariables a variable for the operation user mutation should be generated 1`] = `
-Object {
-  "user": Object {
-    "age": undefined,
-    "id": undefined,
-    "name": undefined,
-  },
-}
-`;
-
-exports[`genVariables a variable for the operation user query should be generated 1`] = `
-Object {
-  "userId": undefined,
-}
 `;

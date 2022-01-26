@@ -18,6 +18,7 @@ import type {
   TypedOperation,
   TypeDef,
   OperationArgument,
+  OperationReturn,
   ScalarMap,
 } from './interface'
 
@@ -84,45 +85,58 @@ function _getTypeDefFromGraphQLNamedType(namedType: GraphQLNamedType): TypeDef {
 export function getOperationFromGraphQLField(
   graphQLField: GraphQLField<unknown, unknown>,
   schema: GraphQLSchema,
+  scalarMap: ScalarMap,
 ): Operation {
   const typeMap = schema.getTypeMap()
   const returnTypeName = getNamedType(graphQLField.type).name
   const returnType = typeMap[returnTypeName]
+
+  const argumentsData = graphQLField?.args.map(item => {
+    const argTypeName = getNamedType(item.type).name
+    const argType = typeMap[argTypeName]
+    return {
+      name: item.name,
+      description: item.description || '',
+      directives: item.astNode?.directives || [],
+      type: argTypeName,
+      typeDef: _getTypeDefFromGraphQLNamedType(argType),
+    }
+  })
+  const argumentsExample = genExampleValue(argumentsData, scalarMap)
+
+  const returnData = {
+    name: graphQLField.name,
+    directives: returnType.astNode?.directives || [],
+    description: returnType.astNode?.description?.value || '',
+    type: returnTypeName,
+    typeDef: _getTypeDefFromGraphQLNamedType(returnType),
+  }
+  const returnExample = genExampleValue(returnData, scalarMap)
   return {
     name: graphQLField?.name,
     description: graphQLField?.description || '',
     directives: graphQLField.astNode?.directives || [],
-    arguments: graphQLField?.args.map(item => {
-      const argTypeName = getNamedType(item.type).name
-      const argType = typeMap[argTypeName]
-      return {
-        name: item.name,
-        description: item.description || '',
-        directives: item.astNode?.directives || [],
-        type: argTypeName,
-        typeDef: _getTypeDefFromGraphQLNamedType(argType),
-      }
-    }),
-    return: {
-      name: graphQLField.name,
-      directives: returnType.astNode?.directives || [],
-      description: returnType.astNode?.description?.value || '',
-      type: returnTypeName,
-      typeDef: _getTypeDefFromGraphQLNamedType(returnType),
-    },
+    arguments: argumentsData,
+    argumentsExample,
+    return: returnData,
+    returnExample,
   }
 }
 
 /**
  * get all operations by schema
  * @param schema - GraphqlSchema instance
+ * @param scalarMap - A map of scalar default value
  */
-export function getOperationsBySchema(schema: GraphQLSchema): TypedOperation[] {
+export function getOperationsBySchema(
+  schema: GraphQLSchema,
+  scalarMap: ScalarMap = {},
+): TypedOperation[] {
   return [
     ...Object.values(schema.getQueryType()?.getFields() || {}).map(
       operationField => {
         return {
-          ...getOperationFromGraphQLField(operationField, schema),
+          ...getOperationFromGraphQLField(operationField, schema, scalarMap),
           type: OperationTypeNode.QUERY,
         }
       },
@@ -130,7 +144,7 @@ export function getOperationsBySchema(schema: GraphQLSchema): TypedOperation[] {
     ...Object.values(schema.getMutationType()?.getFields() || {}).map(
       operationField => {
         return {
-          ...getOperationFromGraphQLField(operationField, schema),
+          ...getOperationFromGraphQLField(operationField, schema, scalarMap),
           type: OperationTypeNode.MUTATION,
         }
       },
@@ -138,7 +152,7 @@ export function getOperationsBySchema(schema: GraphQLSchema): TypedOperation[] {
     ...Object.values(schema.getSubscriptionType()?.getFields() || {}).map(
       operationField => {
         return {
-          ...getOperationFromGraphQLField(operationField, schema),
+          ...getOperationFromGraphQLField(operationField, schema, scalarMap),
           type: OperationTypeNode.SUBSCRIPTION,
         }
       },
@@ -188,11 +202,14 @@ export function groupOperations(
  * @param args - the arguments of operation
  * @param scalarMap - a map contains the default value of scalar type
  */
-export const genVariables = (
-  args: OperationArgument[],
+export const genExampleValue = (
+  args: OperationArgument[] | OperationReturn,
   scalarMap: ScalarMap,
 ) => {
   const variables: Record<string, unknown> = {}
+  if (!Array.isArray(args)) {
+    args = [args]
+  }
   args.forEach(({ name, type, typeDef }) => {
     let defaultValue
     if (!typeDef) {
@@ -216,7 +233,7 @@ export const genVariables = (
           }
         },
       )
-      defaultValue = genVariables(subArgs, scalarMap)
+      defaultValue = genExampleValue(subArgs, scalarMap)
     }
     variables[name] = defaultValue
   })

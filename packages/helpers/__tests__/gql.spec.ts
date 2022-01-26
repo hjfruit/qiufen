@@ -5,7 +5,7 @@ import {
   getOperationFromGraphQLField,
   getOperationsBySchema,
   groupOperations,
-  genVariables,
+  genExampleValue,
 } from '../src/operation'
 import { genSpace, genGQLStr, genGQLStrInGroup } from '../src/gql'
 
@@ -37,7 +37,7 @@ describe('genGQLStr', () => {
   Object.entries(fieldsMap).forEach(([operationType, graphQLFields]) => {
     Object.values(graphQLFields).forEach(graphQLField => {
       it(`a gql string for ${graphQLField.name} ${operationType} should be generated`, () => {
-        const operation = getOperationFromGraphQLField(graphQLField, schema)
+        const operation = getOperationFromGraphQLField(graphQLField, schema, {})
         const gqlString = genGQLStr({
           type: operationType as OperationTypeNode,
           ...operation,
@@ -62,12 +62,15 @@ describe('genGQLStrInGroup', () => {
 })
 /********** genGQLStrInGroup end **************/
 
-/********** genVariables start ************/
-describe('genVariables', () => {
+/********** genExampleValue start ************/
+describe('genExampleValue', () => {
   allOperations.forEach(operation => {
     it(`a variable for the operation ${operation.name} ${operation.type} should be generated`, () => {
-      expect(genVariables(operation.arguments, {})).toMatchSnapshot()
+      expect(genExampleValue(operation.arguments, {})).toMatchSnapshot()
+    })
+    it(`a response for the operation ${operation.name} ${operation.type} should be generated`, () => {
+      expect(genExampleValue(operation.return, {})).toMatchSnapshot()
     })
   })
 })
-/********** genVariables end **************/
+/********** genExampleValue end **************/

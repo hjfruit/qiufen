@@ -2,9 +2,10 @@ import React, { useMemo } from 'react'
 import { message, Space, Table, Tooltip, Switch } from 'antd'
 import { CopyOutlined, PlayCircleOutlined } from '@ant-design/icons'
 import ClipboardJS from 'clipboard'
-import { genGQLStr } from '@graphql-kit/helpers'
+import { genGQLStr, genExampleValue } from '@graphql-kit/helpers'
 import dynamic from 'next/dynamic'
 import { useToggle } from '@fruits-chain/hooks-laba'
+import obj2str from 'stringify-object'
 import styles from './index.module.less'
 import type { IAceEditorProps } from 'react-ace'
 import type {
@@ -20,7 +21,7 @@ import config from '@/config'
 const AceEditor = dynamic<IAceEditorProps>(
   import('react-ace').then(Comp => {
     return Promise.all([
-      import('ace-builds/src-noconflict/mode-json'),
+      import('ace-builds/src-noconflict/mode-javascript'),
       import('ace-builds/src-noconflict/theme-tomorrow'),
     ]).then(() => {
       return Comp.default
@@ -246,11 +247,11 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
           ) : (
             <AceEditor
               theme="tomorrow"
-              mode="json"
+              mode="javascript"
               width="100%"
               readOnly
               maxLines={Infinity}
-              value={JSON.stringify(operation.arguments, null, 2)}
+              value={obj2str(operation.argumentsExample)}
             />
           )}
         </>
@@ -266,11 +267,11 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
       ) : (
         <AceEditor
           theme="tomorrow"
-          mode="json"
+          mode="javascript"
           width="100%"
           readOnly
           maxLines={Infinity}
-          value={JSON.stringify(operation.return, null, 2)}
+          value={obj2str(operation.returnExample)}
           editorProps={{
             $blockScrolling: false,
           }}

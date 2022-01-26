@@ -35,7 +35,9 @@ export interface Operation {
   description: string
   directives: Directives
   arguments: OperationArgument[]
+  argumentsExample: Record<string, unknown>
   return: OperationReturn
+  returnExample: Record<string, unknown>
 }
 
 export interface TypedOperation extends Operation {

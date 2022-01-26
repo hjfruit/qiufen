@@ -10,7 +10,7 @@ import chalk from 'chalk'
 import dayjs from 'dayjs'
 import {
   genGQLStr,
-  genVariables,
+  genExampleValue,
   getOperationsBySchema,
 } from '@graphql-kit/helpers'
 import expressPlayground from 'graphql-playground-middleware-express'
@@ -85,7 +85,10 @@ const createGraphqlController = async (
       return
     }
     const query = genGQLStr(operation)
-    const variables = genVariables(operation.arguments, config.mock.typeMapper)
+    const variables = genExampleValue(
+      operation.arguments,
+      config.mock.typeMapper,
+    )
     const endpoint = `http://${ip}:${port}${BASE_PATH}`
     const playgroundOptions = {
       endpoint,
@@ -105,7 +108,7 @@ const createGraphqlController = async (
   // serve operations
   router.use(`${BASE_PATH}/operations`, async (req, res) => {
     const rawSchema = await getRawSchema()
-    const result = getOperationsBySchema(rawSchema)
+    const result = getOperationsBySchema(rawSchema, config.mock.typeMapper)
     res.send({
       code: 200,
       message: 'success',
