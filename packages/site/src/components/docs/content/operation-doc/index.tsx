@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { message, Space, Table, Tooltip, Switch } from 'antd'
 import { CopyOutlined, PlayCircleOutlined } from '@ant-design/icons'
 import ClipboardJS from 'clipboard'
-import { genGQLStr, genExampleValue } from '@graphql-kit/helpers'
+import { genGQLStr } from '@graphql-kit/helpers'
 import dynamic from 'next/dynamic'
 import { useToggle } from '@fruits-chain/hooks-laba'
 import obj2str from 'stringify-object'
@@ -45,13 +45,15 @@ type ColumnRecord = {
 
 const convertDocDataToTreeData = (
   operation: (OperationArgument | OperationReturn)[],
+  keyPrefix = '',
 ) => {
   const result: ColumnRecord[] = operation.map(({ typeDef, ...originData }) => {
     const isEnum = Array.isArray(typeDef)
+    const key = `${keyPrefix}${originData.name}`
     return {
       ...originData,
       isEnum,
-      key: originData.name,
+      key,
       children: !typeDef
         ? null
         : convertDocDataToTreeData(
@@ -69,6 +71,7 @@ const convertDocDataToTreeData = (
                     ...argInfo,
                   }
                 }),
+            key,
           ),
     }
   })

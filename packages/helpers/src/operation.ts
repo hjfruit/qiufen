@@ -28,16 +28,23 @@ import type {
  */
 function _getObjectTypeDefFromGraphQLFieldMap(
   fieldMap: GraphQLFieldMap<unknown, unknown> | GraphQLInputFieldMap,
+  refChain: string[],
 ) {
   const result: Record<string, FieldTypeDef> = {}
   Object.keys(fieldMap).forEach(fieldName => {
     const field = fieldMap[fieldName]
     const namedType = getNamedType(field.type)
+    const typeName = namedType.name
+    // handle circular ref
+    const refCount = refChain.filter(item => item === typeName).length
     result[fieldName] = {
       description: field.description || '',
       type: namedType.name,
       directives: field.astNode?.directives || [],
-      typeDef: _getTypeDefFromGraphQLNamedType(namedType),
+      typeDef:
+        refCount > 2
+          ? undefined
+          : _getTypeDefFromGraphQLNamedType(namedType, [...refChain, typeName]),
     }
   })
   return result
@@ -47,7 +54,10 @@ function _getObjectTypeDefFromGraphQLFieldMap(
  * get type definition from GraphQLNamedType instance
  * @param namedType - GraphQLNamedType instance from which should be extracted
  */
-function _getTypeDefFromGraphQLNamedType(namedType: GraphQLNamedType): TypeDef {
+function _getTypeDefFromGraphQLNamedType(
+  namedType: GraphQLNamedType,
+  refChain: string[],
+): TypeDef {
   // if the type is scalar, typeDef should be undefined
   if (isScalarType(namedType)) {
     return undefined
@@ -66,18 +76,23 @@ function _getTypeDefFromGraphQLNamedType(namedType: GraphQLNamedType): TypeDef {
     return namedType
       .getTypes()
       .map(item => {
-        return _getObjectTypeDefFromGraphQLFieldMap(item.getFields())
+        return _getObjectTypeDefFromGraphQLFieldMap(item.getFields(), [
+          ...refChain,
+          namedType.name,
+        ])
       })
       .reduce((result, item) => {
         return { ...result, ...item }
       }, {})
   }
   // type should be an instance of Object here
-  return _getObjectTypeDefFromGraphQLFieldMap(namedType.getFields())
+  return _getObjectTypeDefFromGraphQLFieldMap(namedType.getFields(), [
+    ...refChain,
+    namedType.name,
+  ])
 }
 
 /**
- * TODO:handle circular ref
  * get operation info from a GraphQLField instance
  * @param graphQLField - GraphQLField instance from which should be extracted
  * @param schema - GraphQLSchema instance
@@ -99,7 +114,7 @@ export function getOperationFromGraphQLField(
       description: item.description || '',
       directives: item.astNode?.directives || [],
       type: argTypeName,
-      typeDef: _getTypeDefFromGraphQLNamedType(argType),
+      typeDef: _getTypeDefFromGraphQLNamedType(argType, [argTypeName]),
     }
   })
   const argumentsExample = genExampleValue(argumentsData, scalarMap)
@@ -109,7 +124,7 @@ export function getOperationFromGraphQLField(
     directives: returnType.astNode?.directives || [],
     description: returnType.astNode?.description?.value || '',
     type: returnTypeName,
-    typeDef: _getTypeDefFromGraphQLNamedType(returnType),
+    typeDef: _getTypeDefFromGraphQLNamedType(returnType, [returnTypeName]),
   }
   const returnExample = genExampleValue(returnData, scalarMap)
   return {

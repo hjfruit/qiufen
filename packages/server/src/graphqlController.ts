@@ -105,6 +105,17 @@ const createGraphqlController = async (
     expressPlayground(playgroundOptions)(req, res, next)
   })
 
+  // serve ast
+  router.use(`${BASE_PATH}/ast`, async (req, res) => {
+    const rawSchema = await (await getRawSchema()).toConfig().types[0]
+    console.log(rawSchema)
+    res.send({
+      code: 200,
+      message: 'success',
+      data: rawSchema,
+    })
+  })
+
   // serve operations
   router.use(`${BASE_PATH}/operations`, async (req, res) => {
     const rawSchema = await getRawSchema()

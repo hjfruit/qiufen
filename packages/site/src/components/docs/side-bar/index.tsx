@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useState } from 'react'
 import { Input, Collapse, Tooltip } from 'antd'
 import { UpCircleOutlined, CopyOutlined } from '@ant-design/icons'
-import { useThrottleFn } from 'ahooks'
+import { useThrottleFn } from '@fruits-chain/hooks-laba'
 import classnames from 'classnames'
 import { genGQLStrInGroup, groupOperations } from '@graphql-kit/helpers'
 import { copy } from '../content/operation-doc'

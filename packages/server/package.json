@@ -1,7 +1,7 @@
 {
   "name": "@graphql-kit/server",
   "version": "0.0.1",
-  "description": "A server with abilities such as Mock and Doc etc",
+  "description": "A server which can serve a mock server and API docs for your graphql service",
   "type": "module",
   "main": "dist/index.cjs",
   "types": "dist/types.d.ts",
