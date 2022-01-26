@@ -17,7 +17,10 @@
   },
   "files": [
     "dist",
-    ".next"
+    ".next/server",
+    ".next/static",
+    ".next/*.json",
+    ".next/BUILD_ID"
   ],
   "keywords": [
     "graphql-kit",
