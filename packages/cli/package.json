@@ -1,6 +1,6 @@
 {
   "name": "@graphql-kit/cli",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "A cli for graphql-kit",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/changhuali/graphql-kit/tree/main/packages/cli#readme",
   "dependencies": {
-    "@graphql-kit/server": "0.0.1",
+    "@graphql-kit/server": "0.0.0",
     "chalk": "3.0.0",
     "commander": "^8.3.0",
     "deepmerge": "^4.2.2",
