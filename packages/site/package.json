@@ -7,7 +7,7 @@
   "types": "dist/types.d.ts",
   "scripts": {
     "dev": "next dev",
-    "clean": "rimraf dist temp",
+    "clean": "rimraf dist temp .next",
     "lint": "eslint",
     "build-bundle": "next build && rollup -c",
     "build-dts": "tsc src/server.ts --emitDeclarationOnly --declaration --skipLibCheck --noEmit false --outDir temp",

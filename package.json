@@ -6,7 +6,10 @@
   ],
   "scripts": {
     "prepare": "husky install",
-    "build": "lerna run build"
+    "build": "lerna run build",
+    "clean": "lerna run clean",
+    "release": "lerna publish",
+    "postrelease": "yarn clean"
   },
   "devDependencies": {
     "@babel/core": "^7.16.7",
