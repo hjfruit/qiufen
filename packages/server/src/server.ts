@@ -47,7 +47,7 @@ const startServer = (configPath: string): Promise<Server> => {
           ),
         )
         console.log(
-          chalk.green(`You can view api doc at http://${ip}:${port}/`),
+          chalk.green(`You can view api docs at http://${ip}:${port}/`),
         )
       })
 
