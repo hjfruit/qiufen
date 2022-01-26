@@ -19,8 +19,23 @@
     "dist",
     ".next"
   ],
+  "keywords": [
+    "graphql-kit",
+    "server",
+    "mock",
+    "doc"
+  ],
   "author": "changhuali <changhua.li.cq@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/changhuali/graphql-kit",
+    "directory": "packages/site"
+  },
+  "bugs": {
+    "url": "https://github.com/changhuali/graphql-kit/issues"
+  },
+  "homepage": "https://github.com/changhuali/graphql-kit/tree/main/packages/site#readme",
   "dependencies": {
     "next": "12.0.8"
   },

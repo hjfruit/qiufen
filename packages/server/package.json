@@ -15,11 +15,25 @@
     "build": "run-s clean lint build-bundle build-types"
   },
   "files": [
-    "dist",
-    "doc-site"
+    "dist"
+  ],
+  "keywords": [
+    "graphql-kit",
+    "server",
+    "mock",
+    "doc"
   ],
   "author": "changhuali <changhua.li.cq@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/changhuali/graphql-kit",
+    "directory": "packages/server"
+  },
+  "bugs": {
+    "url": "https://github.com/changhuali/graphql-kit/issues"
+  },
+  "homepage": "https://github.com/changhuali/graphql-kit/tree/main/packages/server#readme",
   "dependencies": {
     "@graphql-kit/helpers": "0.0.1",
     "@graphql-kit/site": "0.0.1",

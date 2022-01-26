@@ -22,10 +22,21 @@
   },
   "keywords": [
     "graphql-kit",
-    "cli"
+    "cli",
+    "mock",
+    "doc"
   ],
   "author": "changhuali <changhua.li.cq@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/changhuali/graphql-kit",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/changhuali/graphql-kit/issues"
+  },
+  "homepage": "https://github.com/changhuali/graphql-kit/tree/main/packages/cli#readme",
   "dependencies": {
     "@graphql-kit/server": "0.0.1",
     "chalk": "3.0.0",

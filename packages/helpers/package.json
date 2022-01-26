@@ -20,10 +20,21 @@
   },
   "keywords": [
     "graphql-kit",
-    "helpers"
+    "helpers",
+    "mock",
+    "doc"
   ],
   "author": "changhuali <changhua.li.cq@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/changhuali/graphql-kit",
+    "directory": "packages/helpers"
+  },
+  "bugs": {
+    "url": "https://github.com/changhuali/graphql-kit/issues"
+  },
+  "homepage": "https://github.com/changhuali/graphql-kit/tree/main/packages/helpers#readme",
   "dependencies": {
     "graphql": "^16.2.0"
   },
