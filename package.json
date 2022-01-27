@@ -1,5 +1,4 @@
 {
-  "name": "graphql-kit",
   "private": true,
   "workspaces": [
     "packages/*"
