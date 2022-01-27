@@ -2,5 +2,13 @@
   "packages": ["packages/*"],
   "version": "independent",
   "npmClient": "yarn",
-  "useWorkspaces": true
+  "useWorkspaces": true,
+  "command": {
+    "publish": {
+      "message": "chore(release): publish",
+      "registry": "https://registry.npmjs.org/",
+      "access": "public"
+    }
+  },
+  "ignoreChanges": ["**/test/**", "**/__tests__/**", "**/*.md"]
 }
