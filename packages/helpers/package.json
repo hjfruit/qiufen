@@ -35,8 +35,10 @@
     "url": "https://github.com/changhuali/graphql-kit/issues"
   },
   "homepage": "https://github.com/changhuali/graphql-kit/tree/main/packages/helpers#readme",
-  "dependencies": {
+  "peerDependencies": {
     "graphql": "^16.2.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "graphql": "^16.2.0"
+  }
 }
