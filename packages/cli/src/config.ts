@@ -1,4 +1,4 @@
-import type { GraphqlKitConfig } from '@graphql-kit/server'
+import type { GraphqlKitConfig } from '@fruits-chain/graphql-kit-server'
 
 // default config for graphql-kit
 const config: GraphqlKitConfig = {

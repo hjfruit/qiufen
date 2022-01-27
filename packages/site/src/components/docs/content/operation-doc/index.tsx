@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { message, Space, Table, Tooltip, Switch } from 'antd'
 import { CopyOutlined, PlayCircleOutlined } from '@ant-design/icons'
 import ClipboardJS from 'clipboard'
-import { genGQLStr } from '@graphql-kit/helpers'
+import { genGQLStr } from '@fruits-chain/graphql-kit-helpers'
 import dynamic from 'next/dynamic'
 import { useToggle } from '@fruits-chain/hooks-laba'
 import obj2str from 'stringify-object'
@@ -13,7 +13,7 @@ import type {
   TypedOperation,
   OperationReturn,
   Directives,
-} from '@graphql-kit/helpers'
+} from '@fruits-chain/graphql-kit-helpers'
 import type { ColumnsType } from 'antd/lib/table'
 import type { FC } from 'react'
 import config from '@/config'

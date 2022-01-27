@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react'
 import OperationDoc from './operation-doc'
-import type { TypedOperation } from '@graphql-kit/helpers'
+import type { TypedOperation } from '@fruits-chain/graphql-kit-helpers'
 import type { FC } from 'react'
 
 interface IProps {

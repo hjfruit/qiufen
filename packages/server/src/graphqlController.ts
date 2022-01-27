@@ -12,7 +12,7 @@ import {
   genGQLStr,
   genExampleValue,
   getOperationsBySchema,
-} from '@graphql-kit/helpers'
+} from '@fruits-chain/graphql-kit-helpers'
 import expressPlayground from 'graphql-playground-middleware-express'
 import type { GraphqlKitConfig, IncomingMessageWithBody } from './interface'
 import type { GraphQLSchema, OperationTypeNode } from 'graphql'

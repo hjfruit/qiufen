@@ -3,10 +3,13 @@ import { Input, Collapse, Tooltip } from 'antd'
 import { UpCircleOutlined, CopyOutlined } from '@ant-design/icons'
 import { useThrottleFn } from '@fruits-chain/hooks-laba'
 import classnames from 'classnames'
-import { genGQLStrInGroup, groupOperations } from '@graphql-kit/helpers'
+import {
+  genGQLStrInGroup,
+  groupOperations,
+} from '@fruits-chain/graphql-kit-helpers'
 import { copy } from '../content/operation-doc'
 import styles from './index.module.less'
-import type { TypedOperation } from '@graphql-kit/helpers'
+import type { TypedOperation } from '@fruits-chain/graphql-kit-helpers'
 import type { FC } from 'react'
 
 export interface IProps {

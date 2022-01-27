@@ -1,4 +1,4 @@
-# @graphql-kit/cli
+# @fruits-chain/graphql-kit-cli
 
 A cli for graphql-kit. Its main purpose is to serve a mock server and api docs for your graphql service.
 
@@ -7,13 +7,13 @@ A cli for graphql-kit. Its main purpose is to serve a mock server and api docs f
 Install with npm:
 
 ```bash
-npm install @graphql-kit/cli --save-dev
+npm install @fruits-chain/graphql-kit-cli --save-dev
 ```
 
 Install with yarn:
 
 ```bash
-yarn add @graphql-kit/cli --dev
+yarn add @fruits-chain/graphql-kit-cli --dev
 ```
 
 ## Usage

@@ -1,5 +1,5 @@
 import create from 'zustand'
-import type { TypedOperation } from '@graphql-kit/helpers'
+import type { TypedOperation } from '@fruits-chain/graphql-kit-helpers'
 
 interface OperationStoreState {
   operations?: TypedOperation[]
