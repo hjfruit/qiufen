@@ -1,34 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`genExampleValue a response for the operation user mutation should be generated 1`] = `
+exports[`genExampleValue a arguments example for the operation user mutation should be generated 1`] = `
+Object {
+  "user": Object {
+    "age": null,
+    "id": null,
+    "name": null,
+  },
+}
+`;
+
+exports[`genExampleValue a arguments example for the operation user query should be generated 1`] = `
+Object {
+  "userId": null,
+}
+`;
+
+exports[`genExampleValue a return data example for the operation user mutation should be generated 1`] = `
 Object {
   "user": null,
 }
 `;
 
-exports[`genExampleValue a response for the operation user query should be generated 1`] = `
+exports[`genExampleValue a return data example for the operation user query should be generated 1`] = `
 Object {
-  "user": Object {
-    "age": null,
-    "id": null,
-    "name": null,
-  },
-}
-`;
-
-exports[`genExampleValue a variable for the operation user mutation should be generated 1`] = `
-Object {
-  "user": Object {
-    "age": null,
-    "id": null,
-    "name": null,
-  },
-}
-`;
-
-exports[`genExampleValue a variable for the operation user query should be generated 1`] = `
-Object {
-  "userId": null,
+  "user": Array [
+    Object {
+      "age": null,
+      "id": null,
+      "name": null,
+    },
+  ],
 }
 `;
 
@@ -41,7 +43,7 @@ mutation user($user: UserMutationInput) {
 
 exports[`genGQLStr a gql string for user query should be generated 1`] = `
 "# 用户: 根据用户id获取用户信息
-query user($userId: ID) {
+query user($userId: String) {
   user(userId: $userId) {
     id
     name
@@ -54,7 +56,7 @@ exports[`genGQLStrInGroup gql strings for group 用户 should be generated 1`] =
 "# 用户 
 
 # 根据用户id获取用户信息
-query user($userId: ID) {
+query user($userId: String) {
   user(userId: $userId) {
     id
     name

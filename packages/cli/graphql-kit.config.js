@@ -1,9 +1,10 @@
 module.exports = {
-  port: 9406,
+  port: 5000,
   endpoint: {
-    url: 'http://192.168.10.233:9406/graphql',
+    url: 'http://192.168.10.233:5000/graphql',
   },
-  localSchemaFile: '',
+  localSchemaFile:
+    '/Users/hjmac04/Desktop/graphql-kit/packages/helpers/__tests__/schema.graphql',
   schemaPolicy: 'remote',
   mock: {
     enable: true,

@@ -76,13 +76,7 @@ const DocSidebar: FC<IProps> = ({
                 />
               </Tooltip>
               {operationList.map((operation, index) => {
-                const deprecated = operation.directives?.find(
-                  item => item.name.value === 'deprecated',
-                )
-                const deprecatedReason =
-                  deprecated?.arguments?.find(
-                    item => item.name.value === 'reason',
-                  )?.value || 'deprecated'
+                const deprecatedReason = operation.deprecationReason
                 return (
                   <div
                     key={index}
@@ -96,11 +90,11 @@ const DocSidebar: FC<IProps> = ({
                     <div>
                       <span
                         className={classnames({
-                          [styles.deprecated]: !!deprecated,
+                          [styles.deprecated]: !!deprecatedReason,
                         })}>
                         {operation.description || operation.name}
                       </span>
-                      {!!deprecated && (
+                      {!!deprecatedReason && (
                         <span className={styles.warning}>
                           {deprecatedReason}
                         </span>

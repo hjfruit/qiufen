@@ -10,7 +10,7 @@ import chalk from 'chalk'
 import dayjs from 'dayjs'
 import {
   genGQLStr,
-  genExampleValue,
+  genArgsExample,
   getOperationsBySchema,
 } from '@fruits-chain/graphql-kit-helpers'
 import expressPlayground from 'graphql-playground-middleware-express'
@@ -85,7 +85,7 @@ const createGraphqlController = async (
       return
     }
     const query = genGQLStr(operation)
-    const variables = genExampleValue(
+    const variables = genArgsExample(
       operation.arguments,
       config.mock.typeMapper,
     )

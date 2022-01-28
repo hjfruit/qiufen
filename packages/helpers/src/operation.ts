@@ -42,7 +42,9 @@ function _getObjectTypeDefFromGraphQLFieldMap(
     }
     result[fieldName] = {
       description: field.description || '',
-      type: namedType.name,
+      type: field.type.toString(),
+      typeName,
+      deprecationReason: field.deprecationReason,
       directives: field.astNode?.directives || [],
       typeDef: _getTypeDefFromGraphQLNamedType(namedType, [
         ...refChain,
@@ -115,24 +117,30 @@ export function getOperationFromGraphQLField(
     return {
       name: item.name,
       description: item.description || '',
+      defaultValue: item.defaultValue,
+      deprecationReason: item.deprecationReason,
       directives: item.astNode?.directives || [],
-      type: argTypeName,
+      type: item.type.toString(),
+      typeName: argTypeName,
       typeDef: _getTypeDefFromGraphQLNamedType(argType, [argTypeName]),
     }
   })
-  const argumentsExample = genExampleValue(argumentsData, scalarMap)
+  const argumentsExample = genArgsExample(argumentsData, scalarMap)
 
   const returnData = {
     name: graphQLField.name,
-    directives: returnType.astNode?.directives || [],
     description: returnType.astNode?.description?.value || '',
-    type: returnTypeName,
+    deprecationReason: undefined,
+    directives: returnType.astNode?.directives || [],
+    type: graphQLField.type.toString(),
+    typeName: returnTypeName,
     typeDef: _getTypeDefFromGraphQLNamedType(returnType, [returnTypeName]),
   }
-  const returnExample = genExampleValue(returnData, scalarMap)
+  const returnExample = genReturnExample(returnData, scalarMap)
   return {
     name: graphQLField?.name,
     description: graphQLField?.description || '',
+    deprecationReason: graphQLField.deprecationReason,
     directives: graphQLField.astNode?.directives || [],
     arguments: argumentsData,
     argumentsExample,
@@ -216,31 +224,36 @@ export function groupOperations(
 }
 
 /**
- * generate a variables object
+ * test the type is list type or not
+ * @param type the full type name
+ */
+function _isListType(type: string): boolean {
+  return /^\[.*\]!?$/.test(type)
+}
+
+/**
+ * generate a input object
  * @param args - the arguments of operation
  * @param scalarMap - a map contains the default value of scalar type
  */
-export const genExampleValue = (
-  args: OperationArgument[] | OperationReturn,
+export const genArgsExample = (
+  args: OperationArgument[],
   scalarMap: ScalarMap,
 ) => {
-  const variables: Record<string, unknown> = {}
-  if (!Array.isArray(args)) {
-    args = [args]
-  }
-  args.forEach(({ name, type, typeDef }) => {
-    let defaultValue
+  const argsExample: Record<string, unknown> = {}
+  args.forEach(({ name, typeName, type, typeDef }) => {
+    let result
     if (!typeDef) {
       // scalar type
-      const valueHandler = scalarMap[type]
-      defaultValue = valueHandler
+      const valueHandler = scalarMap[typeName]
+      result = valueHandler
         ? typeof valueHandler === 'function'
           ? valueHandler()
           : valueHandler
         : null
     } else if (Array.isArray(typeDef)) {
       // enum type
-      defaultValue = typeDef[0].value
+      result = typeDef[0].value
     } else {
       // object type
       const subArgs = Object.entries(typeDef).map(
@@ -251,9 +264,53 @@ export const genExampleValue = (
           }
         },
       )
-      defaultValue = genExampleValue(subArgs, scalarMap)
+      result = genArgsExample(subArgs, scalarMap)
     }
-    variables[name] = defaultValue
+    if (_isListType(type)) {
+      argsExample[name] = [result]
+    } else {
+      argsExample[name] = result
+    }
   })
-  return variables
+  return argsExample
+}
+
+/**
+ * generate a return object
+ * @param returnData - the return data of operation
+ * @param scalarMap - a map contains the default value of scalar type
+ */
+export const genReturnExample = (
+  returnData: OperationReturn,
+  scalarMap: ScalarMap,
+) => {
+  const returnExample: Record<string, unknown> = {}
+  const { typeDef, typeName, type, name } = returnData
+  if (!typeDef) {
+    // scalar type
+    const valueHandler = scalarMap[typeName]
+    returnExample[name] = valueHandler
+      ? typeof valueHandler === 'function'
+        ? valueHandler()
+        : valueHandler
+      : null
+  } else if (Array.isArray(typeDef)) {
+    // enum type
+    returnExample[name] = typeDef[0].value
+  } else {
+    // object type
+    const tempObj = {}
+    Object.entries(typeDef).forEach(([fieldName, fieldTypeDef]) => {
+      const subReturnData = {
+        name: fieldName,
+        ...fieldTypeDef,
+      }
+      Object.assign(tempObj, genReturnExample(subReturnData, scalarMap))
+    })
+    returnExample[name] = tempObj
+  }
+  if (_isListType(type)) {
+    returnExample[name] = [returnExample[name]]
+  }
+  return returnExample
 }

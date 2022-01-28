@@ -5,7 +5,8 @@ import {
   getOperationFromGraphQLField,
   getOperationsBySchema,
   groupOperations,
-  genExampleValue,
+  genArgsExample,
+  genReturnExample,
 } from '../src/operation'
 import { genSpace, genGQLStr, genGQLStrInGroup } from '../src/gql'
 
@@ -65,11 +66,11 @@ describe('genGQLStrInGroup', () => {
 /********** genExampleValue start ************/
 describe('genExampleValue', () => {
   allOperations.forEach(operation => {
-    it(`a variable for the operation ${operation.name} ${operation.type} should be generated`, () => {
-      expect(genExampleValue(operation.arguments, {})).toMatchSnapshot()
+    it(`a arguments example for the operation ${operation.name} ${operation.type} should be generated`, () => {
+      expect(genArgsExample(operation.arguments, {})).toMatchSnapshot()
     })
-    it(`a response for the operation ${operation.name} ${operation.type} should be generated`, () => {
-      expect(genExampleValue(operation.return, {})).toMatchSnapshot()
+    it(`a return data example for the operation ${operation.name} ${operation.type} should be generated`, () => {
+      expect(genReturnExample(operation.return, {})).toMatchSnapshot()
     })
   })
 })

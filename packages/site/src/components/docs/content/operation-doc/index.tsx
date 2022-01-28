@@ -40,6 +40,7 @@ type ColumnRecord = {
   isEnum: boolean
   key: string
   directives: Directives
+  deprecationReason: OperationReturn['deprecationReason']
   children: ColumnRecord[] | null
 }
 
@@ -59,10 +60,12 @@ const convertDocDataToTreeData = (
         : convertDocDataToTreeData(
             isEnum
               ? typeDef.map(item => ({
+                  deprecationReason: undefined,
                   name: (item.value as string | number).toString(),
                   description: item.description,
                   directives: item.directives,
                   type: '',
+                  typeName: '',
                   typeDef: undefined,
                 }))
               : Object.entries(typeDef).map(([argName, argInfo]) => {
@@ -87,10 +90,8 @@ const columnGen = (
       dataIndex: 'name',
       width: '35%',
       render(value, record) {
-        const deprecated = record.directives?.find(
-          item => item.name.value === 'deprecated',
-        )
-        if (deprecated) {
+        const deprecationReason = record.deprecationReason
+        if (deprecationReason) {
           return <span className={styles.deprecated}>{value}</span>
         }
         return value
@@ -101,21 +102,12 @@ const columnGen = (
       dataIndex: 'description',
       width: '25%',
       render(val, record) {
-        const deprecated = record.directives?.find(
-          item => item.name.value === 'deprecated',
-        )
-        if (deprecated) {
-          const reasonArg = deprecated.arguments?.find(
-            item => item.name.value === 'reason',
-          )
+        const deprecationReason = record.deprecationReason
+        if (deprecationReason) {
           return (
             <>
               {val}
-              <span className={styles.warning}>
-                {reasonArg?.value.kind === 'StringValue'
-                  ? reasonArg?.value.value
-                  : 'deprecated'}
-              </span>
+              <span className={styles.warning}>{deprecationReason}</span>
             </>
           )
         }

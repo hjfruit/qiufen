@@ -35,7 +35,12 @@ type Query {
   """
   用户: 根据用户id获取用户信息
   """
-  user(userId: ID!): User
+  user(
+    """
+    用户id
+    """
+    userId: String
+  ): [User!]!
 }
 
 type Mutation {
