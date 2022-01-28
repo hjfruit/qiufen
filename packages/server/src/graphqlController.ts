@@ -1,10 +1,6 @@
-import fs from 'fs'
 import express from 'express'
 import { graphqlHTTP } from 'express-graphql'
-import { buildSchema } from 'graphql'
 import { addMocksToSchema } from '@graphql-tools/mock'
-import { UrlLoader } from '@graphql-tools/url-loader'
-import { loadSchema } from '@graphql-tools/load'
 import { createProxyMiddleware } from 'http-proxy-middleware'
 import chalk from 'chalk'
 import dayjs from 'dayjs'
@@ -14,8 +10,10 @@ import {
   getOperationsBySchema,
 } from '@fruits-chain/graphql-kit-helpers'
 import expressPlayground from 'graphql-playground-middleware-express'
+import { getBuildSchema } from './server'
 import type { GraphqlKitConfig, IncomingMessageWithBody } from './interface'
 import type { GraphQLSchema, OperationTypeNode } from 'graphql'
+
 const BASE_PATH = '/graphql'
 
 /**
@@ -32,25 +30,6 @@ const createGraphqlController = async (
   const { port, endpoint, schemaPolicy, localSchemaFile, mock } = config
 
   // get raw schema
-  async function getRawSchema() {
-    if (schemaPolicy === 'remote') {
-      try {
-        return await loadSchema(endpoint.url, {
-          loaders: [new UrlLoader()],
-        })
-      } catch (err) {
-        console.warn(
-          chalk.yellow(
-            'there is an error when loading a remote schema, it will try to load local schema',
-          ),
-        )
-      }
-    }
-    const localSchemaString = fs.readFileSync(localSchemaFile, {
-      encoding: 'utf-8',
-    })
-    return buildSchema(localSchemaString)
-  }
 
   const resolvers = () => {
     return {
@@ -60,6 +39,14 @@ const createGraphqlController = async (
 
   function getMockedSchema(schema: GraphQLSchema) {
     return addMocksToSchema({ schema, mocks: mock.typeMapper, resolvers })
+  }
+
+  const getRawSchema = async () => {
+    return getBuildSchema({
+      schemaPolicy,
+      localSchemaFile,
+      endpointUrl: endpoint.url,
+    })
   }
 
   const rawSchema = await getRawSchema()

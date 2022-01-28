@@ -1,7 +1,11 @@
 import { createRequire } from 'module'
+import { readFileSync } from 'fs'
 import express from 'express'
 import bodyParser from 'body-parser'
 import chalk from 'chalk'
+import { buildSchema } from 'graphql'
+import { UrlLoader } from '@graphql-tools/url-loader'
+import { loadSchema } from '@graphql-tools/load'
 import createGraphqlController from './graphqlController'
 import createDocController from './docController'
 import getIPAddress from './utils/getIPAddress'
@@ -9,6 +13,43 @@ import type { GraphqlKitConfig } from './interface'
 import type { Server } from 'http'
 
 const require = createRequire(import.meta.url)
+export interface LoadSchemaOptions {
+  schemaPolicy: GraphqlKitConfig['schemaPolicy']
+  endpointUrl: string
+  localSchemaFile: string
+}
+
+/**
+ * get BuildSchema
+ * @param param0 - params
+ * @returns
+ */
+export async function getBuildSchema({
+  schemaPolicy,
+  endpointUrl,
+  localSchemaFile,
+}: LoadSchemaOptions) {
+  if (schemaPolicy === 'remote') {
+    try {
+      return await loadSchema(endpointUrl, {
+        loaders: [new UrlLoader()],
+      })
+    } catch (err) {
+      console.warn(
+        chalk.yellow(
+          'there is an error when loading a remote schema, it will try to load local schema',
+        ),
+      )
+    }
+  }
+  if (!localSchemaFile) {
+    throw new Error('load schema error')
+  }
+  const localSchemaString = readFileSync(localSchemaFile, {
+    encoding: 'utf-8',
+  })
+  return buildSchema(localSchemaString)
+}
 
 /**
  * start graphql server
