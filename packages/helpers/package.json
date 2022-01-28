@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules yarn jest",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules yarn jest",
     "clean": "rimraf dist temp",
     "lint": "eslint",
     "build-bundle": "rollup -c",

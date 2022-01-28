@@ -4,7 +4,6 @@
   "description": "A cli for graphql-kit",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
-  "types": "dist/types.d.ts",
   "files": [
     "bin",
     "dist"
