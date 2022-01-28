@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-import { URL } from 'url'
+import { URL, fileURLToPath } from 'url'
 import { OperationTypeNode, buildSchema } from 'graphql'
 import {
   getOperationFromGraphQLField,
@@ -20,7 +20,7 @@ describe('genSpace', () => {
 /********** genSpace end ************/
 
 /********** genGQLStr start **********/
-const schemaPath = new URL('./schema.graphql', import.meta.url).pathname
+const schemaPath = fileURLToPath(new URL('./schema.graphql', import.meta.url))
 const schemaString = readFileSync(schemaPath, {
   encoding: 'utf-8',
 })
