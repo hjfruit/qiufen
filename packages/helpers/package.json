@@ -1,6 +1,6 @@
 {
   "name": "@fruits-chain/graphql-kit-helpers",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "description": "Collection of helper functions for graphql-kit",
   "main": "dist/index.cjs",
   "type": "module",
