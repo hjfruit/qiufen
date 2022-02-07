@@ -2,8 +2,9 @@ import { writeFile } from 'fs/promises'
 import * as path from 'path'
 import { watchFile } from 'fs'
 import { Command } from 'commander'
+import { isScalarType } from 'graphql'
 import inquirer from 'inquirer'
-import { startServer } from '@fruits-chain/graphql-kit-server'
+import { getBuildSchema, startServer } from '@fruits-chain/graphql-kit-server'
 import chalk from 'chalk'
 import obj2str from 'stringify-object'
 import deepMerge from 'deepmerge'
@@ -22,6 +23,24 @@ program
     const prompt = inquirer.createPromptModule()
     prompt(initQs).then(async answers => {
       const config = deepMerge(defaultConfig, answers)
+      const typeMapper = (
+        await getBuildSchema({
+          schemaPolicy: config.schemaPolicy,
+          endpointUrl: config.endpoint.url,
+          localSchemaFile: config.localSchemaFile,
+        })
+      ).getTypeMap()
+      Object.values(typeMapper).forEach(type => {
+        const typeName = type.name
+        if (
+          !typeName.startsWith('_') &&
+          isScalarType(type) &&
+          !config.mock.typeMapper[typeName] &&
+          typeName
+        ) {
+          config.mock.typeMapper[typeName] = () => null
+        }
+      })
       const contentStr = `module.exports = ${obj2str(config, {
         indent: '  ',
       })}`
@@ -30,7 +49,7 @@ program
         contentStr,
         'utf-8',
       )
-      console.info(config)
+      console.info(contentStr)
       console.info(
         `${chalk.greenBright(
           '🤖 A configuration file has been generated, now you can run ',
