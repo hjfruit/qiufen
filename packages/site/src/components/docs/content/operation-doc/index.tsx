@@ -235,6 +235,8 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
           {mode === 'TABLE' ? (
             <Table
               columns={argumentsColumns}
+              defaultExpandAllRows
+              className={styles.table}
               dataSource={argumentsData}
               pagination={false}
               bordered
@@ -255,6 +257,8 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
       {mode === 'TABLE' ? (
         <Table
           columns={returnColumns}
+          defaultExpandAllRows
+          className={styles.table}
           dataSource={returnData}
           pagination={false}
           bordered

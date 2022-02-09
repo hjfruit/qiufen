@@ -76,18 +76,20 @@ const Doc: NextPageWithLayout = () => {
         </div>
       )
     }
+
+    const selectedOperationId =
+      (selectedOperation?.type || '') + selectedOperation?.name
+
     return (
       <>
         <SideBar
           keyword={keyword || ''}
           onKeywordChange={onKeywordChange}
           operations={operations}
-          selectedOperationId={
-            (selectedOperation?.type || '') + selectedOperation?.name
-          }
+          selectedOperationId={selectedOperationId}
           onSelect={onSelect}
         />
-        <Content operation={selectedOperation} />
+        <Content key={selectedOperationId} operation={selectedOperation} />
       </>
     )
   }, [mounted, operations, error, selectedOperation, keyword, onKeywordChange])
