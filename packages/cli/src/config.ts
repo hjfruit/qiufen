@@ -10,6 +10,7 @@ const config: GraphqlKitConfig = {
   schemaPolicy: 'remote',
   mock: {
     enable: true,
+    schemaFiles: [],
     whiteList: '...',
     headers: {},
     typeMapper: {},

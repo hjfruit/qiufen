@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const path = require('path')
+
 module.exports = {
   port: 9406,
   endpoint: {
@@ -7,6 +10,9 @@ module.exports = {
   schemaPolicy: 'remote',
   mock: {
     enable: true,
+    schemaFiles: [
+      path.resolve(__dirname, '../helpers/__tests__/schema.graphql'),
+    ],
     whiteList: '...',
     headers: {},
     typeMapper: {

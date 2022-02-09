@@ -4,7 +4,7 @@ import { watchFile } from 'fs'
 import { Command } from 'commander'
 import { isScalarType } from 'graphql'
 import inquirer from 'inquirer'
-import { getBuildSchema, startServer } from '@fruits-chain/graphql-kit-server'
+import { getGraphQLSchema, startServer } from '@fruits-chain/graphql-kit-server'
 import chalk from 'chalk'
 import obj2str from 'stringify-object'
 import deepMerge from 'deepmerge'
@@ -23,13 +23,20 @@ program
     const prompt = inquirer.createPromptModule()
     prompt(initQs).then(async answers => {
       const config = deepMerge(defaultConfig, answers)
-      const typeMapper = (
-        await getBuildSchema({
-          schemaPolicy: config.schemaPolicy,
-          endpointUrl: config.endpoint.url,
-          localSchemaFile: config.localSchemaFile,
-        })
-      ).getTypeMap()
+      let typeMapper
+      try {
+        typeMapper = (
+          await getGraphQLSchema({
+            schemaPolicy: config.schemaPolicy,
+            endpointUrl: config.endpoint.url,
+            localSchemaFile: config.localSchemaFile,
+            mockSchemaFiles: config.mock.schemaFiles,
+          })
+        ).getTypeMap()
+      } catch (err) {
+        console.log(chalk.red(err))
+        process.exit(1)
+      }
       Object.values(typeMapper).forEach(type => {
         const typeName = type.name
         if (

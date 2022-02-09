@@ -10,7 +10,7 @@ import {
   getOperationsBySchema,
 } from '@fruits-chain/graphql-kit-helpers'
 import expressPlayground from 'graphql-playground-middleware-express'
-import { getBuildSchema } from './server'
+import { getGraphQLSchema } from './server'
 import type { GraphqlKitConfig, IncomingMessageWithBody } from './interface'
 import type { GraphQLSchema, OperationTypeNode } from 'graphql'
 
@@ -29,8 +29,6 @@ const createGraphqlController = async (
 
   const { port, endpoint, schemaPolicy, localSchemaFile, mock } = config
 
-  // get raw schema
-
   const resolvers = () => {
     return {
       ...mock.resolvers,
@@ -42,11 +40,18 @@ const createGraphqlController = async (
   }
 
   const getRawSchema = async () => {
-    return getBuildSchema({
-      schemaPolicy,
-      localSchemaFile,
-      endpointUrl: endpoint.url,
-    })
+    try {
+      const schema = await getGraphQLSchema({
+        schemaPolicy,
+        localSchemaFile,
+        endpointUrl: endpoint.url,
+        mockSchemaFiles: mock.schemaFiles,
+      })
+      return schema
+    } catch (err) {
+      console.log(chalk.red(err))
+      process.exit(1)
+    }
   }
 
   const rawSchema = await getRawSchema()

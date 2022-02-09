@@ -1,11 +1,12 @@
 import { createRequire } from 'module'
-import { readFileSync } from 'fs'
+import { readFileSync, existsSync } from 'fs'
 import express from 'express'
 import bodyParser from 'body-parser'
 import chalk from 'chalk'
 import { buildSchema } from 'graphql'
 import { UrlLoader } from '@graphql-tools/url-loader'
 import { loadSchema } from '@graphql-tools/load'
+import { stitchSchemas } from '@graphql-tools/stitch'
 import createGraphqlController from './graphqlController'
 import createDocController from './docController'
 import getIPAddress from './utils/getIPAddress'
@@ -17,38 +18,73 @@ export interface LoadSchemaOptions {
   schemaPolicy: GraphqlKitConfig['schemaPolicy']
   endpointUrl: string
   localSchemaFile: string
+  mockSchemaFiles: GraphqlKitConfig['mock']['schemaFiles']
 }
 
 /**
  * get BuildSchema
- * @param param0 - params
- * @returns
+ * @param options - options
  */
-export async function getBuildSchema({
+async function getGraphQLSchema({
   schemaPolicy,
   endpointUrl,
   localSchemaFile,
+  mockSchemaFiles,
 }: LoadSchemaOptions) {
-  if (schemaPolicy === 'remote') {
-    try {
-      return await loadSchema(endpointUrl, {
-        loaders: [new UrlLoader()],
-      })
-    } catch (err) {
-      console.warn(
-        chalk.yellow(
-          'there is an error when loading a remote schema, it will try to load local schema',
-        ),
-      )
-    }
+  let backendSchema
+  switch (schemaPolicy) {
+    case 'remote':
+      try {
+        backendSchema = await loadSchema(endpointUrl, {
+          loaders: [new UrlLoader()],
+        })
+      } catch (err) {
+        throw new Error('there is an error when loading a remote schema')
+      }
+      break
+    case 'local':
+      if (!localSchemaFile) {
+        throw new Error(
+          'there is no localSchemaFile option, you should set it in your config file',
+        )
+      } else if (!existsSync(localSchemaFile)) {
+        throw new Error(`${localSchemaFile} is not exist`)
+      } else {
+        backendSchema = buildSchema(
+          readFileSync(localSchemaFile, {
+            encoding: 'utf-8',
+          }),
+        )
+      }
+      break
+    default:
+      throw new Error(`unknown schemaPolicy ${schemaPolicy}`)
   }
-  if (!localSchemaFile) {
-    throw new Error('load schema error')
-  }
-  const localSchemaString = readFileSync(localSchemaFile, {
-    encoding: 'utf-8',
+  return stitchSchemas({
+    subschemas: [
+      { schema: backendSchema },
+      ...mockSchemaFiles.map((file, index) => {
+        try {
+          if (!file) {
+            throw new Error(`schemaFiles[${index}] is not valid`)
+          } else if (!existsSync(file)) {
+            throw new Error(`schemaFiles[${index}] ${file} is not exist`)
+          } else {
+            const mockSchema = buildSchema(
+              readFileSync(file, {
+                encoding: 'utf-8',
+              }),
+            )
+            return {
+              schema: mockSchema,
+            }
+          }
+        } catch (err) {
+          throw err as Error
+        }
+      }),
+    ],
   })
-  return buildSchema(localSchemaString)
 }
 
 /**
@@ -99,4 +135,4 @@ const startServer = (configPath: string): Promise<Server> => {
   })
 }
 
-export { startServer }
+export { startServer, getGraphQLSchema }
