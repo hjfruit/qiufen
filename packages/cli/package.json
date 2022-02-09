@@ -39,17 +39,19 @@
   "dependencies": {
     "@fruits-chain/graphql-kit-server": "^0.0.2",
     "chalk": "3.0.0",
+    "chokidar": "^3.5.3",
     "commander": "^8.3.0",
     "deepmerge": "^4.2.2",
     "inquirer": "^8.2.0",
+    "resolve-dependencies": "^6.0.7",
     "stringify-object": "3.0.0"
   },
   "peerDependencies": {
     "graphql": "^16.2.0"
   },
   "devDependencies": {
-    "graphql": "^16.2.0",
     "@types/inquirer": "^8.1.3",
-    "@types/stringify-object": "^4.0.1"
+    "@types/stringify-object": "^4.0.1",
+    "graphql": "^16.2.0"
   }
 }

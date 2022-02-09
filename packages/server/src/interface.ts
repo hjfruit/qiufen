@@ -20,7 +20,7 @@ export type SchemaPolicy = 'local' | 'remote'
 export interface MockConfig {
   /** enable the mock ability while it's true */
   enable: boolean
-  /** schema files used for dev env only */
+  /** schema files used for dev env, valid when enable is true */
   schemaFiles: string[]
   /** headers for playground request */
   headers: Record<string, string>

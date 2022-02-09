@@ -42,13 +42,14 @@ module.exports = {
   endpoint: {
     url: string, // your backend graphql service endpoint
   },
-  localSchemaFile: string, // your local graphql schema file path(should be an absolute path)
+  localSchemaFile: string, // your local graphql schema file path
   schemaPolicy: 'remote' | 'local', // schema loading policy
   mock: {
     enable: boolean, // whether enable mock
+    schemaFiles: string[], // custom schema files used for dev env only, valid when enable is true
     whiteList: '...' | string[], // a list of operations which will be served by mock server, '...' means all operations will be mocked
     headers: Record<string, string>, // custom headers for playground
-    typeMapper: { // the mock server will mock graphql field with these rules
+    typeMapper: { // the mock server will mock graphql field with these rules, you must map all your scalar type, or you'll get an error
       // example:
       // Int: () => 0,
       // String: '',
