@@ -1,3 +1,9 @@
+# 0.0.4
+
+2022-02-10
+
+- 💡 change config type & move headers to playground opt
+
 # 0.0.3
 
 2022-02-09

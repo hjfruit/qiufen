@@ -9,52 +9,64 @@ import { getGraphQLSchema, startServer } from '@fruits-chain/graphql-kit-server'
 import chalk from 'chalk'
 import resolveDeps from 'resolve-dependencies'
 import obj2str from 'stringify-object'
-import deepMerge from 'deepmerge'
 import { version } from '../package.json'
 import { initQs } from './questions'
-import defaultConfig from './config'
+import type { GraphQLSchema } from 'graphql'
+import type { Answers } from './questions'
 import type { Server } from 'http'
 import type { FSWatcher } from 'chokidar'
-import type { GraphqlKitConfig } from '@fruits-chain/graphql-kit-server'
+import type {
+  GraphqlKitConfig,
+  MockConfig,
+} from '@fruits-chain/graphql-kit-server'
 import type { FileMap } from 'resolve-dependencies/lib/file'
 
 const program = new Command()
 program.version(version)
 
+// gen typeMapper automatically
+const genTypeMapper = (typeMap: ReturnType<GraphQLSchema['getTypeMap']>) => {
+  const mapper: MockConfig['typeMapper'] = {}
+  Object.values(typeMap).forEach(type => {
+    const typeName = type.name
+    if (
+      !typeName.startsWith('_') &&
+      isScalarType(type) &&
+      !mapper[typeName] &&
+      typeName
+    ) {
+      mapper[typeName] = () => null
+    }
+  })
+  return mapper
+}
 // create a init command
 program
   .command('init')
   .description('run config initialization wizard')
   .action(() => {
     const prompt = inquirer.createPromptModule()
-    prompt(initQs).then(async answers => {
-      const config = deepMerge(defaultConfig, answers)
+    prompt(initQs).then(async (answers: Answers) => {
       let typeMapper
       try {
-        typeMapper = (
-          await getGraphQLSchema({
-            schemaPolicy: config.schemaPolicy,
-            endpointUrl: config.endpoint.url,
-            localSchemaFile: config.localSchemaFile,
-            mockSchemaFiles: config.mock.schemaFiles,
-          })
-        ).getTypeMap()
+        const graphqlSchema = await getGraphQLSchema({
+          endpointUrl: answers.endpoint.url,
+        })
+        const typeMap = graphqlSchema.getTypeMap()
+        typeMapper = genTypeMapper(typeMap)
       } catch (err) {
         console.log(chalk.red(err))
         process.exit(1)
       }
-      // gen typeMapper automatically
-      Object.values(typeMapper).forEach(type => {
-        const typeName = type.name
-        if (
-          !typeName.startsWith('_') &&
-          isScalarType(type) &&
-          !config.mock.typeMapper[typeName] &&
-          typeName
-        ) {
-          config.mock.typeMapper[typeName] = () => null
-        }
-      })
+      const config = {
+        ...answers,
+        port: +answers.port,
+        mock: {
+          ...answers.mock,
+          typeMapper,
+        },
+      }
+
       // gen config file
       const contentStr = `module.exports = ${obj2str(config, {
         indent: '  ',
@@ -94,8 +106,8 @@ const getDepFiles = (deps: FileMap, depChain: string[]) => {
 const getConfigDepFiles = async (configPath: string) => {
   let depFiles: string[] = []
   const config = (await import(configPath)) as GraphqlKitConfig
-  if (config.mock.enable) {
-    depFiles = [...config.mock.schemaFiles]
+  if (config.mock?.enable) {
+    depFiles = [...(config.mock?.schemaFiles || [])]
   }
   Object.values(resolveDeps(configPath).entries).forEach(entry => {
     if (entry) {

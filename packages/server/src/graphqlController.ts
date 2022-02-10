@@ -27,16 +27,17 @@ const createGraphqlController = async (
 ) => {
   const router = express.Router()
 
-  const { port, endpoint, schemaPolicy, localSchemaFile, mock } = config
+  const { port, endpoint, schemaPolicy, localSchemaFile, mock, playground } =
+    config
 
   const resolvers = () => {
     return {
-      ...mock.resolvers,
+      ...mock?.resolvers,
     }
   }
 
   function getMockedSchema(schema: GraphQLSchema) {
-    return addMocksToSchema({ schema, mocks: mock.typeMapper, resolvers })
+    return addMocksToSchema({ schema, mocks: mock?.typeMapper, resolvers })
   }
 
   const getRawSchema = async () => {
@@ -45,7 +46,7 @@ const createGraphqlController = async (
         schemaPolicy,
         localSchemaFile,
         endpointUrl: endpoint.url,
-        mockSchemaFiles: mock.schemaFiles,
+        mockSchemaFiles: mock?.schemaFiles,
       })
       return schema
     } catch (err) {
@@ -79,7 +80,7 @@ const createGraphqlController = async (
     const query = genGQLStr(operation)
     const variables = genArgsExample(
       operation.arguments,
-      config.mock.typeMapper,
+      config.mock?.typeMapper || {},
     )
     const endpoint = `http://${ip}:${port}${BASE_PATH}`
     const playgroundOptions = {
@@ -90,7 +91,7 @@ const createGraphqlController = async (
           endpoint,
           query,
           variables: JSON.stringify(variables, null, 2),
-          headers: mock.headers,
+          headers: playground?.headers,
         },
       ],
     }
@@ -111,7 +112,7 @@ const createGraphqlController = async (
   // serve operations
   router.use(`${BASE_PATH}/operations`, async (req, res) => {
     const rawSchema = await getRawSchema()
-    const result = getOperationsBySchema(rawSchema, config.mock.typeMapper)
+    const result = getOperationsBySchema(rawSchema, config.mock?.typeMapper)
     res.send({
       code: 200,
       message: 'success',
@@ -161,9 +162,10 @@ const createGraphqlController = async (
   })
   router.post(BASE_PATH, (req, res, next) => {
     if (
-      mock.enable &&
+      mock?.enable &&
       (mock.whiteList === '...' ||
-        mock.whiteList.includes(req.body.operationName))
+        mock.whiteList === undefined ||
+        mock.whiteList?.includes(req.body.operationName))
     ) {
       console.log(
         chalk.red(
