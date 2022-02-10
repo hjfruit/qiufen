@@ -1,3 +1,10 @@
+# 0.0.4
+
+2022-02-10
+
+- 💡 change config type definition
+- 💡 change mock.headers to playground.headers
+
 # 0.0.3
 
 2022-02-09

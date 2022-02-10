@@ -10,15 +10,15 @@ import { stitchSchemas } from '@graphql-tools/stitch'
 import createGraphqlController from './graphqlController'
 import createDocController from './docController'
 import getIPAddress from './utils/getIPAddress'
-import type { GraphqlKitConfig } from './interface'
+import type { GraphqlKitConfig, MockConfig } from './interface'
 import type { Server } from 'http'
 
 const require = createRequire(import.meta.url)
 export interface LoadSchemaOptions {
-  schemaPolicy: GraphqlKitConfig['schemaPolicy']
-  endpointUrl: string
-  localSchemaFile: string
-  mockSchemaFiles: GraphqlKitConfig['mock']['schemaFiles']
+  schemaPolicy?: GraphqlKitConfig['schemaPolicy']
+  endpointUrl: GraphqlKitConfig['endpoint']['url']
+  localSchemaFile?: GraphqlKitConfig['localSchemaFile']
+  mockSchemaFiles?: MockConfig['schemaFiles']
 }
 
 /**
@@ -28,11 +28,12 @@ export interface LoadSchemaOptions {
 async function getGraphQLSchema({
   schemaPolicy,
   endpointUrl,
-  localSchemaFile,
-  mockSchemaFiles,
+  localSchemaFile = '',
+  mockSchemaFiles = [],
 }: LoadSchemaOptions) {
   let backendSchema
   switch (schemaPolicy) {
+    case undefined:
     case 'remote':
       try {
         backendSchema = await loadSchema(endpointUrl, {

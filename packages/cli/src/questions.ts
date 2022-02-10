@@ -1,17 +1,17 @@
-import type { GraphqlKitConfig } from '@/../server/dist/types'
+/**
+ * questions for config initialization wizard
+ */
 
-type Answers = GraphqlKitConfig
-
-// questions for config initialization wizard
 export const initQs = [
   {
     type: 'input',
     name: 'port',
-    filter(input: string) {
-      return +input
-    },
+    message: 'input your graphql service port',
     validate(input: string) {
       const port = +input
+      if (!input.trim()) {
+        return 'port is required'
+      }
       if (isNaN(port)) {
         return 'the port should be a number'
       }
@@ -24,6 +24,7 @@ export const initQs = [
   {
     type: 'input',
     name: 'endpoint.url',
+    message: 'input your backend graphql service url',
     validate(input: string) {
       const urlRegexp =
         /^(https?:\/\/)([0-9a-z.]+)(:[0-9]+)?([/0-9a-z.]+)?(\?[0-9a-z&=]+)?(#[0-9-a-z]+)?/i
@@ -34,19 +35,18 @@ export const initQs = [
     },
   },
   {
-    type: 'input',
-    name: 'localSchemaFile',
-  },
-  {
-    type: 'list',
-    name: 'schemaPolicy',
-    choices: ['local', 'remote'],
-    when(answers: Answers) {
-      return !!answers.localSchemaFile
-    },
-  },
-  {
     type: 'confirm',
     name: 'mock.enable',
+    message: 'whether enable mock',
   },
 ]
+
+export interface Answers {
+  port: number
+  endpoint: {
+    url: string
+  }
+  mock: {
+    enable: boolean
+  }
+}
