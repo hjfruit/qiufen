@@ -145,7 +145,7 @@ program
         ignoreInitial: true,
       }).on('all', () => {
         console.log(
-          chalk.cyan('Config file has been changed, server will be reload'),
+          chalk.cyan('Config file has changed, server will be reload'),
         )
         server.close(async err => {
           if (!err) {
