@@ -3,7 +3,7 @@
 2022-02-10
 
 - 💡 change config type definition
-- 💡 change mock.headers to playground.headers
+- 💡 change config type & move headers to playground opt
 
 # 0.0.3
 
