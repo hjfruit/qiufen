@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useState } from 'react'
-import { Input, Collapse, Tooltip } from 'antd'
+import { Input, Collapse, Tooltip, Space } from 'antd'
 import { UpCircleOutlined, CopyOutlined } from '@ant-design/icons'
 import { useThrottleFn } from '@fruits-chain/hooks-laba'
 import classnames from 'classnames'
@@ -9,6 +9,7 @@ import {
 } from '@fruits-chain/graphql-kit-helpers'
 import { copy } from '../content/operation-doc'
 import styles from './index.module.less'
+import type { CollapseProps } from 'antd'
 import type { TypedOperation } from '@fruits-chain/graphql-kit-helpers'
 import type { FC } from 'react'
 
@@ -87,18 +88,18 @@ const DocSidebar: FC<IProps> = ({
                     onClick={() => {
                       onSelect(operation)
                     }}>
-                    <div>
-                      <span
-                        className={classnames({
-                          [styles.deprecated]: !!deprecatedReason,
-                        })}>
+                    <div
+                      className={classnames({
+                        [styles.deprecated]: !!deprecatedReason,
+                      })}>
+                      <Space direction="vertical">
                         {operation.description || operation.name}
-                      </span>
-                      {!!deprecatedReason && (
-                        <span className={styles.warning}>
-                          {deprecatedReason}
-                        </span>
-                      )}
+                        {!!deprecatedReason && (
+                          <span className={styles.warning}>
+                            {deprecatedReason}
+                          </span>
+                        )}
+                      </Space>
                     </div>
                   </div>
                 )
@@ -109,6 +110,17 @@ const DocSidebar: FC<IProps> = ({
       },
     )
   }, [groupedOperations, keyword, onSelect, selectedOperationId])
+
+  const defaultActiveKey = useMemo(() => {
+    const activeKey: CollapseProps['defaultActiveKey'] = []
+    // use [].some to break in advance
+    Object.entries(groupedOperations).some(([groupName, items]) => {
+      if (items.some(item => item.type + item.name === selectedOperationId)) {
+        activeKey.push(groupName)
+      }
+    })
+    return activeKey
+  }, [])
 
   return (
     <div className={styles.sidebar}>
@@ -121,9 +133,7 @@ const DocSidebar: FC<IProps> = ({
         value={keyword}
       />
       <div className={styles.main} id="sideBar" onScroll={onScroll.run}>
-        <Collapse defaultActiveKey={Object.keys(groupedOperations)}>
-          {contentJSX}
-        </Collapse>
+        <Collapse defaultActiveKey={defaultActiveKey}>{contentJSX}</Collapse>
       </div>
       <Tooltip title="Back to top">
         <UpCircleOutlined
