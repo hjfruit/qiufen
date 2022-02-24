@@ -118,8 +118,7 @@ const columnGen = (
       title: field === 'arguments' ? 'required' : 'nullable',
       dataIndex: 'type',
       width: '20%',
-      render(val: string, record) {
-        if (record.isEnum) return ''
+      render(val: string) {
         let result = !val?.endsWith('!')
         if (field === 'arguments') {
           result = !!val?.endsWith('!')
@@ -134,10 +133,7 @@ const columnGen = (
       title: 'type',
       dataIndex: 'type',
       width: '20%',
-      render(value: string, record) {
-        if (record.isEnum) {
-          return 'Enum'
-        }
+      render(value: string) {
         return value?.endsWith('!') ? value.slice(0, value.length - 1) : value
       },
     },
