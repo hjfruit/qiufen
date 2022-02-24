@@ -1,7 +1,6 @@
 /**
  * questions for config initialization wizard
  */
-
 export const initQs = [
   {
     type: 'input',
@@ -40,8 +39,7 @@ export const initQs = [
     message: 'whether enable mock',
   },
 ]
-
-export interface Answers {
+export interface InitQsAnswers {
   port: number
   endpoint: {
     url: string

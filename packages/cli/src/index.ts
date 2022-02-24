@@ -1,6 +1,7 @@
 import { writeFile } from 'fs/promises'
 import * as path from 'path'
 import { existsSync } from 'fs'
+import { createRequire } from 'module'
 import { Command } from 'commander'
 import { isScalarType } from 'graphql'
 import inquirer from 'inquirer'
@@ -11,8 +12,9 @@ import resolveDeps from 'resolve-dependencies'
 import obj2str from 'stringify-object'
 import { version } from '../package.json'
 import { initQs } from './questions'
+import { log } from './log'
 import type { GraphQLSchema } from 'graphql'
-import type { Answers } from './questions'
+import type { InitQsAnswers } from './questions'
 import type { Server } from 'http'
 import type { FSWatcher } from 'chokidar'
 import type {
@@ -21,8 +23,25 @@ import type {
 } from '@fruits-chain/graphql-kit-server'
 import type { FileMap } from 'resolve-dependencies/lib/file'
 
+const require = createRequire(import.meta.url)
+
 const program = new Command()
 program.version(version)
+
+const getConfigFilePath = (guard?: boolean) => {
+  const configFilePath = path.join(process.cwd(), 'graphql-kit.config.js')
+  if (guard && !existsSync(configFilePath)) {
+    console.log(
+      chalk.red(
+        `${configFilePath} is not exist, you should use ${chalk.cyan(
+          'gk init',
+        )} to generate it`,
+      ),
+    )
+    process.exit(1)
+  }
+  return configFilePath
+}
 
 // gen typeMapper automatically
 const genTypeMapper = (typeMap: ReturnType<GraphQLSchema['getTypeMap']>) => {
@@ -46,7 +65,7 @@ program
   .description('run config initialization wizard')
   .action(() => {
     const prompt = inquirer.createPromptModule()
-    prompt(initQs).then(async (answers: Answers) => {
+    prompt(initQs).then(async (answers: InitQsAnswers) => {
       let typeMapper
       try {
         const graphqlSchema = await getGraphQLSchema({
@@ -71,11 +90,7 @@ program
       const contentStr = `module.exports = ${obj2str(config, {
         indent: '  ',
       })}`
-      await writeFile(
-        path.resolve(process.cwd(), 'graphql-kit.config.js'),
-        contentStr,
-        'utf-8',
-      )
+      await writeFile(getConfigFilePath(), contentStr, 'utf-8')
       console.info(contentStr)
       console.info(
         `${chalk.greenBright(
@@ -103,13 +118,13 @@ const getDepFiles = (deps: FileMap, depChain: string[]) => {
   })
   return depFiles
 }
-const getConfigDepFiles = async (configPath: string) => {
+const getConfigDepFiles = async (configFilePath: string) => {
   let depFiles: string[] = []
-  const config = (await import(configPath)) as GraphqlKitConfig
+  const config = (await import(configFilePath)) as GraphqlKitConfig
   if (config.mock?.enable) {
     depFiles = [...(config.mock?.schemaFiles || [])]
   }
-  Object.values(resolveDeps(configPath).entries).forEach(entry => {
+  Object.values(resolveDeps(configFilePath).entries).forEach(entry => {
     if (entry) {
       depFiles.push(entry.absPath)
       depFiles = depFiles.concat(getDepFiles(entry.deps, [entry.absPath]))
@@ -123,24 +138,12 @@ program
   .command('start')
   .description('start a graphql server')
   .action(async () => {
-    // validate config file
-    const configPath = path.join(process.cwd(), 'graphql-kit.config.js')
-    if (!existsSync(configPath)) {
-      console.log(
-        chalk.red(
-          `${configPath} is not exist, you should use ${chalk.cyan(
-            'gk init',
-          )} to generate it`,
-        ),
-      )
-      process.exit(1)
-    }
-
+    const configFilePath = getConfigFilePath(true)
     let server: Server
     let watcher: FSWatcher
     const loadServer = async () => {
-      server = await startServer(configPath)
-      const configDepFiles = await getConfigDepFiles(configPath)
+      server = await startServer(configFilePath)
+      const configDepFiles = await getConfigDepFiles(configFilePath)
       watcher = watch(configDepFiles, {
         ignoreInitial: true,
       }).on('all', () => {
@@ -159,6 +162,57 @@ program
     }
 
     await loadServer()
+  })
+
+// create a check command
+program
+  .command('check')
+  .description('check some config options')
+  .action(async () => {
+    const configFilePath = getConfigFilePath(true)
+    const config = require(configFilePath) as GraphqlKitConfig
+
+    // check typeMapper
+    try {
+      const graphqlSchema = await getGraphQLSchema({
+        schemaPolicy: config.schemaPolicy,
+        endpointUrl: config.endpoint.url,
+        localSchemaFile: config.localSchemaFile,
+        mockSchemaFiles: config.mock?.schemaFiles,
+      })
+      const typeMap = graphqlSchema.getTypeMap()
+      const existScalars = Object.keys(config.mock?.typeMapper || {})
+      const currScalars = Object.keys(genTypeMapper(typeMap))
+      const unionScalars = Array.from(new Set(currScalars.concat(existScalars)))
+      const scalarsShouldBeAdded: string[] = []
+      const scalarShouldBeRemoved: string[] = []
+      unionScalars.forEach(scalar => {
+        if (!existScalars.includes(scalar)) {
+          scalarsShouldBeAdded.push(scalar)
+        } else if (!currScalars.includes(scalar)) {
+          scalarShouldBeRemoved.push(scalar)
+        }
+      })
+      if (scalarsShouldBeAdded.length) {
+        log.fail(
+          `${scalarsShouldBeAdded.length} scalars [${scalarsShouldBeAdded}] should be added into your typeMapper`,
+        )
+      }
+      if (scalarShouldBeRemoved.length) {
+        log.fail(
+          `${scalarShouldBeRemoved.length} scalars [${scalarShouldBeRemoved}] should be removed from your typeMapper`,
+        )
+      }
+      if (
+        scalarShouldBeRemoved.length === 0 &&
+        scalarsShouldBeAdded.length === 0
+      ) {
+        log.pass(`typeMapper`)
+      }
+    } catch (err) {
+      console.log(chalk.red(err))
+      process.exit(1)
+    }
   })
 
 program.parse(process.argv)
