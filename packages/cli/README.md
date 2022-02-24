@@ -37,35 +37,43 @@ Now, you can click the link to view docs or proxy your api to the mock server.
 After running `yarn gk init`, you'll have a graphql-kit.config.js file in your directory.
 
 ```TS
-module.exports = {
-  port: number, // server port
-  endpoint: {
-    url: string, // your backend graphql service endpoint
-  },
-  localSchemaFile: string, // your local graphql schema file path
-  schemaPolicy: 'remote' | 'local', // schema loading policy
-  mock: {
-    enable: boolean, // whether enable mock
-    schemaFiles: string[], // custom schema files used for dev env only, valid when enable is true
-    whiteList: '...' | string[], // a list of operations which will be served by mock server, '...' means all operations will be mocked
-    headers: Record<string, string>, // custom headers for playground
-    typeMapper: { // the mock server will mock graphql field with these rules, you must map all your scalar type, or you'll get an error
-      // example:
-      // Int: () => 0,
-      // String: '',
-    },
-    resolvers: {
-      Query: { // the mock server will mock graphql query with these rules
-        // example:
-        // user: () => ({
-        //   name: 'John'
-        // })
-      },
-      Mutation: { // the mock server will mock graphql mutation with these rules
-        // example:
-        // login: () => true
-      },
-    },
-  },
+interface GraphqlKitConfig {
+  /** your gk service port */
+  port: number
+  /** backend service config */
+  endpoint: ServiceConfig
+  /** local graphql schema file path */
+  localSchemaFile?: string
+  /** use either local schema or remote schema, if unset, remote will be used */
+  schemaPolicy?: SchemaPolicy
+  /** mock config */
+  mock?: MockConfig
+  /** playground config */
+  playground?: PlaygroundConfig
+}
+
+interface ServiceConfig {
+  /** backend service url */
+  url: string
+}
+
+interface MockConfig {
+  /** enable the mock ability while it's true */
+  enable: boolean
+  /** schema files used for dev env, valid when enable is true */
+  schemaFiles?: string[]
+  /** graphql operation name which will be mocked, ... means all operations, if unset, ... will be used */
+  whiteList?: string[] | '...'
+  /** value map rules, you should add all your scalar type mappers here or you'll get error */
+  typeMapper: IMockOptions['mocks']
+  /** graphql resolvers for operations, you can custom operation response here */
+  resolvers?: IMockOptions['resolvers']
+}
+
+type SchemaPolicy = 'local' | 'remote'
+
+interface PlaygroundConfig {
+  /** request headers */
+  headers?: Record<string, string>
 }
 ```

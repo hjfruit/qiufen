@@ -2,8 +2,9 @@
 
 2022-02-10
 
-- 💡 change config type definition
-- 💡 change config type & move headers to playground opt
+- 🐛(docs) the type of enum is unclear
+- 🎸(docs) unfold all groups in 's sidebar by default
+- 💡(config) change the structure
 
 # 0.0.3
 
