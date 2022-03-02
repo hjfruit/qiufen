@@ -2,8 +2,9 @@
 
 2022-02-10
 
-- 🐛(docs) the type of enum is unclear
+- 🎸(cli) check command
 - 🎸(docs) unfold all groups in 's sidebar by default
+- 🐛(docs) the type of enum is unclear
 - 💡(config) change the structure
 
 # 0.0.3
