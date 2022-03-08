@@ -3,7 +3,7 @@
 2022-02-10
 
 - 🎸(cli) check command
-- 🎸(docs) unfold all groups in 's sidebar by default
+- 🎸(docs) collapse all groups in 's sidebar by default
 - 🐛(docs) the type of enum is unclear
 - 💡(config) change the structure
 
