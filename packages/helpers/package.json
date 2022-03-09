@@ -11,12 +11,11 @@
   ],
   "scripts": {
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules yarn jest",
-    "clean": "rimraf dist temp",
+    "clean": "rimraf dist",
     "lint": "eslint",
+    "dev": "yarn clean && rollup -c -w",
     "build-bundle": "rollup -c",
-    "build-dts": "tsc --emitDeclarationOnly --declaration --outDir temp",
-    "build-types": "yarn build-dts && api-extractor run && rimraf temp",
-    "build": "run-s clean lint test build-bundle build-types"
+    "build": "run-s lint clean build-bundle"
   },
   "keywords": [
     "graphql-kit",

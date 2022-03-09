@@ -14,7 +14,7 @@
   "scripts": {
     "dev": "npm run clean && rollup -c -w",
     "cli": "node ./dist/index.cjs",
-    "clean": "rimraf dist temp",
+    "clean": "rimraf dist",
     "lint": "eslint",
     "build-bundle": "rollup -c",
     "build": "run-s clean lint build-bundle"

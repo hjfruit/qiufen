@@ -14,7 +14,7 @@ import type { GraphqlKitConfig, MockConfig } from './interface'
 import type { Server } from 'http'
 
 const require = createRequire(import.meta.url)
-export interface LoadSchemaOptions {
+interface LoadSchemaOptions {
   schemaPolicy?: GraphqlKitConfig['schemaPolicy']
   endpointUrl: GraphqlKitConfig['endpoint']['url']
   localSchemaFile?: GraphqlKitConfig['localSchemaFile']
