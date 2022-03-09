@@ -32,7 +32,7 @@ const _genInnerArgumentsStr = (args: OperationArgument[]) => {
 
 /**
  * generate a typeDef gql
- * @param args - the type of operation
+ * @param typeDef - the type of operation
  * @param indent - the indent of gql
  */
 const _genTypeDefStr = (typeDef: TypeDef, indent: number) => {
