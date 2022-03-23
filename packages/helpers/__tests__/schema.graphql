@@ -1,56 +1,40 @@
 """
-用户信息
+人
 """
-type User {
-  """
-  id
-  """
-  id: ID!
-  """
-  姓名
-  """
-  name: String!
-  """
-  年龄
-  """
-  age: Int!
-}
-
-input UserMutationInput {
-  """
-  id
-  """
-  id: ID!
+interface Role {
   """
   姓名
   """
   name: String
-  """
-  年龄
-  """
-  age: Int
 }
+type A {
+  test: String
+}
+"""
+学生
+"""
+type Student implements Role {
+  sex: String
+  name: String
+}
+
+"""
+老师
+"""
+type Teacher implements Role {
+  sex: String
+  name: String
+}
+
+extend type Teacher {
+  """
+  职级
+  """
+  level(a: ID, b: ID): String
+}
+
+union User = Student | Teacher
 
 type Query {
-  """
-  用户: 根据用户id获取用户信息
-  """
-  user(
-    """
-    用户id
-    """
-    userId: String
-  ): [User!]!
-}
-
-type Mutation {
-  """
-  用户: 修改用户信息
-  """
-  user(
-    """
-    新用户信息
-    """
-    user: UserMutationInput
-  ): Boolean
+  role(a: ID, b: String!): User
 }

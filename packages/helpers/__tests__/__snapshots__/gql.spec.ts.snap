@@ -1,72 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`genExampleValue a arguments example for the operation user mutation should be generated 1`] = `
+exports[`genExampleValue a arguments example for the operation role query should be generated 1`] = `
 Object {
-  "user": Object {
-    "age": null,
-    "id": null,
-    "name": null,
-  },
+  "a": null,
+  "b": null,
 }
 `;
 
-exports[`genExampleValue a arguments example for the operation user query should be generated 1`] = `
+exports[`genExampleValue a return data example for the operation role query should be generated 1`] = `
 Object {
-  "userId": null,
+  "name": null,
+  "sex": null,
 }
 `;
 
-exports[`genExampleValue a return data example for the operation user mutation should be generated 1`] = `
-Object {
-  "user": null,
-}
-`;
-
-exports[`genExampleValue a return data example for the operation user query should be generated 1`] = `
-Object {
-  "user": Array [
-    Object {
-      "age": null,
-      "id": null,
-      "name": null,
-    },
-  ],
-}
-`;
-
-exports[`genGQLStr a gql string for user mutation should be generated 1`] = `
-"# 用户: 修改用户信息
-mutation user($user: UserMutationInput) {
-  user(user: $user)
-}"
-`;
-
-exports[`genGQLStr a gql string for user query should be generated 1`] = `
-"# 用户: 根据用户id获取用户信息
-query user($userId: String) {
-  user(userId: $userId) {
-    id
-    name
-    age
+exports[`genGQLStr a gql string for role query should be generated 1`] = `
+"query role(a: ID, b: String!, a1: ID, b1: ID) {
+  role(a: $a, b: $b) {
+    ... on Student {
+      sex
+      name
+    }
+    ... on Teacher {
+      sex
+      name
+      level(a: $a1, b: $b1)
+    }
   }
 }"
 `;
 
-exports[`genGQLStrInGroup gql strings for group 用户 should be generated 1`] = `
-"# 用户 
+exports[`genGQLStrInGroup gql strings for group default should be generated 1`] = `
+"# default 
 
-# 根据用户id获取用户信息
-query user($userId: String) {
-  user(userId: $userId) {
-    id
-    name
-    age
+query role(a: ID, b: String!, a1: ID, b1: ID) {
+  role(a: $a, b: $b) {
+    ... on Student {
+      sex
+      name
+    }
+    ... on Teacher {
+      sex
+      name
+      level(a: $a1, b: $b1)
+    }
   }
-}
-
-# 修改用户信息
-mutation user($user: UserMutationInput) {
-  user(user: $user)
 }
 "
 `;

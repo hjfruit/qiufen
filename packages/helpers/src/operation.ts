@@ -5,147 +5,167 @@ import {
   isUnionType,
   OperationTypeNode,
 } from 'graphql'
+import type { InputType, ObjectTypeDef, OutputType } from '.'
 import type {
   GraphQLField,
-  GraphQLInputFieldMap,
-  GraphQLNamedType,
   GraphQLSchema,
-  GraphQLFieldMap,
+  GraphQLInputType,
+  GraphQLInterfaceType,
+  GraphQLObjectType,
+  GraphQLOutputType,
 } from 'graphql'
-import type {
-  FieldTypeDef,
-  Operation,
-  TypedOperation,
-  TypeDef,
-  OperationArgument,
-  OperationReturn,
-  ScalarMap,
-} from './interface'
+import type { Operation, TypedOperation, ScalarMap } from './interface'
 
-/**
- * get type definition from GraphQLFieldMap or GraphQLInputFieldMap instance
- * @param fieldMap - GraphQLFieldMap or GraphQLInputFieldMap instance from which should be extracted
- */
-function _getObjectTypeDefFromGraphQLFieldMap(
-  fieldMap: GraphQLFieldMap<unknown, unknown> | GraphQLInputFieldMap,
-  refChain: string[],
-) {
-  const result: Record<string, FieldTypeDef> = {}
-  Object.keys(fieldMap).forEach(fieldName => {
-    const field = fieldMap[fieldName]
-    const namedType = getNamedType(field.type)
-    const typeName = namedType.name
-    // handle circular ref
-    const refCount = refChain.filter(item => item === typeName).length
-    if (refCount > 2) {
-      return
-    }
-    result[fieldName] = {
-      description: field.description || '',
-      type: field.type.toString(),
-      typeName,
-      deprecationReason: field.deprecationReason,
-      directives: field.astNode?.directives || [],
-      typeDef: _getTypeDefFromGraphQLNamedType(namedType, [
-        ...refChain,
-        typeName,
-      ]),
-    }
-  })
-  return result
-}
+function _normalizeGraphqlInputType(
+  type: GraphQLInputType,
+  refChain: string[] = [],
+): InputType {
+  const namedType = getNamedType(type)
+  const typeName = type.toString()
+  const ofTypeName = namedType.name
+  // handle ref cycle
+  const refCount = refChain.filter(item => item === ofTypeName).length
 
-/**
- * get type definition from GraphQLNamedType instance
- * @param namedType - GraphQLNamedType instance from which should be extracted
- */
-function _getTypeDefFromGraphQLNamedType(
-  namedType: GraphQLNamedType,
-  refChain: string[],
-): TypeDef {
-  // if the type is scalar, typeDef should be undefined
   if (isScalarType(namedType)) {
-    return undefined
+    return {
+      kind: 'Scalar',
+      name: typeName,
+      ofName: ofTypeName,
+    }
   }
-  // if the type is enum, return an array of enum item
   if (isEnumType(namedType)) {
-    return namedType.getValues().map(item => ({
-      name: item.name,
-      description: item.description || '',
-      directives: item.astNode?.directives || [],
-      value: item.value,
-    }))
+    return {
+      kind: 'Enum',
+      name: typeName,
+      ofName: ofTypeName,
+      values: namedType.getValues().map(item => ({
+        name: item.name,
+        description: item.description,
+        value: item.value,
+        deprecationReason: item.deprecationReason,
+      })),
+    }
   }
-  // if the type is union, return the object including all fields
+  return {
+    kind: 'InputObject',
+    name: typeName,
+    ofName: ofTypeName,
+    fields:
+      refCount > 2
+        ? []
+        : Object.values(namedType.getFields()).map(item => {
+            return {
+              name: item.name,
+              description: item.description,
+              defaultValue: item.defaultValue,
+              deprecationReason: item.deprecationReason,
+              type: _normalizeGraphqlInputType(item.type, [
+                ...refChain,
+                namedType.name,
+              ]),
+            }
+          }),
+  }
+}
+
+function _normalizeObjectType(
+  type: GraphQLInterfaceType | GraphQLObjectType<unknown, unknown>,
+  typeName: string,
+  refChain: string[] = [],
+  scalarMap: ScalarMap = {},
+): ObjectTypeDef {
+  const refCount = refChain.filter(item => item === type.name).length
+
+  return {
+    kind: 'Object',
+    name: typeName,
+    ofName: type.name,
+    fields:
+      refCount > 2
+        ? []
+        : Object.values(type.getFields()).map(item => {
+            return normalizeGraphqlField(item, scalarMap)
+          }),
+  }
+}
+
+function _normalizeGraphqlOutputType(
+  type: GraphQLOutputType,
+  refChain: string[] = [],
+  scalarMap: ScalarMap = {},
+): OutputType {
+  const namedType = getNamedType(type)
+  const typeName = type.toString()
+  const ofTypeName = namedType.name
+  const nextRefChain = [...refChain, ofTypeName]
+
+  if (isScalarType(namedType)) {
+    return {
+      kind: 'Scalar',
+      name: typeName,
+      ofName: ofTypeName,
+    }
+  }
+  if (isEnumType(namedType)) {
+    return {
+      kind: 'Enum',
+      name: typeName,
+      ofName: ofTypeName,
+      values: namedType.getValues().map(item => ({
+        name: item.name,
+        description: item.description,
+        value: item.value,
+        deprecationReason: item.deprecationReason,
+      })),
+    }
+  }
   if (isUnionType(namedType)) {
-    return namedType
-      .getTypes()
-      .map(item => {
-        return _getObjectTypeDefFromGraphQLFieldMap(item.getFields(), [
-          ...refChain,
-          namedType.name,
-        ])
-      })
-      .reduce((result, item) => {
-        return { ...result, ...item }
-      }, {})
+    return {
+      kind: 'Union',
+      name: typeName,
+      ofName: ofTypeName,
+      types: namedType.getTypes().map(item => {
+        return _normalizeObjectType(item, item.name, nextRefChain, scalarMap)
+      }),
+    }
   }
-  // type should be an instance of Object here
-  return _getObjectTypeDefFromGraphQLFieldMap(namedType.getFields(), [
-    ...refChain,
-    namedType.name,
-  ])
+  return _normalizeObjectType(namedType, typeName, nextRefChain, scalarMap)
 }
 
 /**
- * get operation info from a GraphQLField instance
- * @param graphQLField - GraphQLField instance from which should be extracted
- * @param schema - GraphQLSchema instance
+ * normalize a GraphqlField instance
+ * @param graphQLField - a GraphQLField instance
+ * @param scalarMap - a value map used to set the default value for each scalar type
  */
-export function getOperationFromGraphQLField(
+export function normalizeGraphqlField(
   graphQLField: GraphQLField<unknown, unknown>,
-  schema: GraphQLSchema,
   scalarMap: ScalarMap,
 ): Operation {
-  const typeMap = schema.getTypeMap()
-  const returnTypeName = getNamedType(graphQLField.type).name
-  const returnType = typeMap[returnTypeName]
-
-  const argumentsData = graphQLField?.args.map(item => {
-    const argTypeName = getNamedType(item.type).name
-    const argType = typeMap[argTypeName]
+  const args: Operation['args'] = graphQLField?.args.map(item => {
     return {
       name: item.name,
-      description: item.description || '',
+      description: item.description,
       defaultValue: item.defaultValue,
       deprecationReason: item.deprecationReason,
-      directives: item.astNode?.directives || [],
-      type: item.type.toString(),
-      typeName: argTypeName,
-      typeDef: _getTypeDefFromGraphQLNamedType(argType, [argTypeName]),
+      type: _normalizeGraphqlInputType(item.type),
     }
   })
-  const argumentsExample = genArgsExample(argumentsData, scalarMap)
+  const argsExample = genArgsExample(args, scalarMap)
 
-  const returnData = {
-    name: graphQLField.name,
-    description: returnType.astNode?.description?.value || '',
-    deprecationReason: undefined,
-    directives: returnType.astNode?.directives || [],
-    type: graphQLField.type.toString(),
-    typeName: returnTypeName,
-    typeDef: _getTypeDefFromGraphQLNamedType(returnType, [returnTypeName]),
-  }
-  const returnExample = genReturnExample(returnData, scalarMap)
+  const output: Operation['output'] = _normalizeGraphqlOutputType(
+    graphQLField.type,
+    [],
+    scalarMap,
+  )
+  const outputExample = genOutputExample(output, scalarMap)
   return {
-    name: graphQLField?.name,
-    description: graphQLField?.description || '',
+    name: graphQLField.name,
+    description: graphQLField.description,
     deprecationReason: graphQLField.deprecationReason,
-    directives: graphQLField.astNode?.directives || [],
-    arguments: argumentsData,
-    argumentsExample,
-    return: returnData,
-    returnExample,
+    args,
+    argsExample: argsExample,
+    output,
+    outputExample: { [graphQLField.name]: outputExample },
   }
 }
 
@@ -162,24 +182,24 @@ export function getOperationsBySchema(
     ...Object.values(schema.getQueryType()?.getFields() || {}).map(
       operationField => {
         return {
-          ...getOperationFromGraphQLField(operationField, schema, scalarMap),
-          type: OperationTypeNode.QUERY,
+          ...normalizeGraphqlField(operationField, scalarMap),
+          operationType: OperationTypeNode.QUERY,
         }
       },
     ),
     ...Object.values(schema.getMutationType()?.getFields() || {}).map(
       operationField => {
         return {
-          ...getOperationFromGraphQLField(operationField, schema, scalarMap),
-          type: OperationTypeNode.MUTATION,
+          ...normalizeGraphqlField(operationField, scalarMap),
+          operationType: OperationTypeNode.MUTATION,
         }
       },
     ),
     ...Object.values(schema.getSubscriptionType()?.getFields() || {}).map(
       operationField => {
         return {
-          ...getOperationFromGraphQLField(operationField, schema, scalarMap),
-          type: OperationTypeNode.SUBSCRIPTION,
+          ...normalizeGraphqlField(operationField, scalarMap),
+          operationType: OperationTypeNode.SUBSCRIPTION,
         }
       },
     ),
@@ -191,8 +211,8 @@ export function getOperationsBySchema(
  * @param operation - the operation need to be grouped
  */
 const _groupBy: GroupByFn = (operation: TypedOperation) => {
-  const [groupName, description] = operation.description.includes(':')
-    ? operation.description.split(/:\s*/)
+  const [groupName, description] = operation.description?.includes(':')
+    ? operation.description.split(/[:]\s*/)
     : ['default', operation.description]
   const groupOperation = { ...operation, description }
   return { groupName, operation: groupOperation }
@@ -223,12 +243,16 @@ export function groupOperations(
   return groupMap
 }
 
-/**
- * test the type is list type or not
- * @param type the full type name
- */
-function _isListType(type: string): boolean {
-  return /^\[.*\]!?$/.test(type)
+function genListTypeValue(typeName: string, value: unknown) {
+  const listPattern = /^\[(.+)\]!?$/
+  let ofTypeName = typeName.match(listPattern)?.[1]
+  let result = value
+
+  while (ofTypeName) {
+    result = [result]
+    ofTypeName = ofTypeName.match(listPattern)?.[1]
+  }
+  return result
 }
 
 /**
@@ -237,40 +261,30 @@ function _isListType(type: string): boolean {
  * @param scalarMap - a map contains the default value of scalar type
  */
 export const genArgsExample = (
-  args: OperationArgument[],
+  args: Operation['args'],
   scalarMap: ScalarMap,
 ) => {
   const argsExample: Record<string, unknown> = {}
-  args.forEach(({ name, typeName, type, typeDef }) => {
+  args.forEach(({ name, type }) => {
     let result
-    if (!typeDef) {
-      // scalar type
-      const valueHandler = scalarMap[typeName]
-      result = valueHandler
-        ? typeof valueHandler === 'function'
-          ? valueHandler()
-          : valueHandler
-        : null
-    } else if (Array.isArray(typeDef)) {
-      // enum type
-      result = typeDef[0].value
-    } else {
-      // object type
-      const subArgs = Object.entries(typeDef).map(
-        ([fieldName, fieldTypeDef]) => {
-          return {
-            name: fieldName,
-            ...fieldTypeDef,
-          }
-        },
-      )
-      result = genArgsExample(subArgs, scalarMap)
+    let scalarHandler
+    switch (type.kind) {
+      case 'Scalar':
+        scalarHandler = scalarMap[type.ofName]
+        result = scalarHandler
+          ? typeof scalarHandler === 'function'
+            ? scalarHandler()
+            : scalarHandler
+          : null
+        break
+      case 'Enum':
+        result = type.values[0].value
+        break
+      case 'InputObject':
+        result = genArgsExample(type.fields, scalarMap)
+        break
     }
-    if (_isListType(type)) {
-      argsExample[name] = [result]
-    } else {
-      argsExample[name] = result
-    }
+    argsExample[name] = genListTypeValue(type.name, result)
   })
   return argsExample
 }
@@ -280,37 +294,44 @@ export const genArgsExample = (
  * @param returnData - the return data of operation
  * @param scalarMap - a map contains the default value of scalar type
  */
-export const genReturnExample = (
-  returnData: OperationReturn,
+export const genOutputExample = (
+  output: Operation['output'],
   scalarMap: ScalarMap,
 ) => {
-  const returnExample: Record<string, unknown> = {}
-  const { typeDef, typeName, type, name } = returnData
-  if (!typeDef) {
-    // scalar type
-    const valueHandler = scalarMap[typeName]
-    returnExample[name] = valueHandler
-      ? typeof valueHandler === 'function'
-        ? valueHandler()
-        : valueHandler
-      : null
-  } else if (Array.isArray(typeDef)) {
-    // enum type
-    returnExample[name] = typeDef[0].value
-  } else {
-    // object type
-    const tempObj = {}
-    Object.entries(typeDef).forEach(([fieldName, fieldTypeDef]) => {
-      const subReturnData = {
-        name: fieldName,
-        ...fieldTypeDef,
-      }
-      Object.assign(tempObj, genReturnExample(subReturnData, scalarMap))
-    })
-    returnExample[name] = tempObj
+  let result: unknown
+  let scalarHandler
+  const typeName = output.name
+
+  switch (output.kind) {
+    case 'Scalar':
+      scalarHandler = scalarMap[output.ofName]
+      result = scalarHandler
+        ? typeof scalarHandler === 'function'
+          ? scalarHandler()
+          : scalarHandler
+        : null
+      break
+    case 'Enum':
+      result = output.values[0].value
+      break
+    case 'Object':
+      result = {}
+      output.fields.forEach(field => {
+        ;(result as Record<string, unknown>)[field.name] = genOutputExample(
+          field.output,
+          scalarMap,
+        )
+      })
+      break
+    case 'Union':
+      result = {}
+      output.types[0].fields.forEach(field => {
+        ;(result as Record<string, unknown>)[field.name] = genOutputExample(
+          field.output,
+          scalarMap,
+        )
+      })
+      break
   }
-  if (_isListType(type)) {
-    returnExample[name] = [returnExample[name]]
-  }
-  return returnExample
+  return genListTypeValue(typeName, result)
 }

@@ -1,4 +1,5 @@
-import type { OperationArgument, TypedOperation, TypeDef } from './interface'
+import type { ArgTypeDef, ObjectFieldTypeDef, ObjectTypeDef } from '.'
+import type { TypedOperation } from './interface'
 
 /**
  * generate a space string
@@ -9,45 +10,67 @@ export const genSpace = (count: number) => {
 }
 
 /**
- * generate an outer arguments string
- * @param args - the arguments of operation
- */
-const _genOuterArgumentsStr = (args: OperationArgument[]) => {
-  if (args.length) {
-    return `(${args.map(item => `$${item.name}: ${item.type}`).join(', ')})`
-  }
-  return ''
-}
-
-/**
- * generate an inner arguments string
- * @param args - operation's arguments
- */
-const _genInnerArgumentsStr = (args: OperationArgument[]) => {
-  if (args.length) {
-    return `(${args.map(item => `${item.name}: $${item.name}`).join(', ')})`
-  }
-  return ''
-}
-
-/**
  * generate a typeDef gql
  * @param typeDef - the type of operation
  * @param indent - the indent of gql
  */
-const _genTypeDefStr = (typeDef: TypeDef, indent: number) => {
-  if (!typeDef) return '\n'
-  let str = ''
-  if (Array.isArray(typeDef)) {
-    str += '\n'
-  } else {
-    str += ` {\n`
-    const fields = Object.entries(typeDef)
-    fields.forEach(([field, fieldInfo]) => {
-      str += `${genSpace(indent)}${field}`
-      str += _genTypeDefStr(fieldInfo.typeDef, indent + 2)
-    })
-    str += `${genSpace(indent - 2)}}\n`
+const _genObjectFieldTypeDefStr = (
+  objectField: ObjectFieldTypeDef,
+  lineIndent: number,
+  indent: number,
+  allArgs: ArgTypeDef[],
+) => {
+  const { name, args, output } = objectField
+  let str = `${genSpace(lineIndent)}${name}`
+  if (args.length) {
+    str += `(${args
+      .map(item => {
+        // if name is repeated, add index as suffix
+        const sameNameArgLen = allArgs.filter(
+          existItem => existItem.name === item.name,
+        ).length
+        const argName = `${item.name}${sameNameArgLen || ''}`
+        // save all args in allArgs array
+        allArgs.push({
+          ...item,
+          name: argName,
+        })
+        return `${item.name}: $${argName}`
+      })
+      .join(', ')})`
+  }
+  const genObjectTypeStr = (type: ObjectTypeDef, _lineIndent: number) => {
+    return `${type.fields.reduce((fieldsStr, field) => {
+      return (
+        fieldsStr +
+        _genObjectFieldTypeDefStr(field, _lineIndent, indent, allArgs)
+      )
+    }, '')}`
+  }
+  switch (output.kind) {
+    case 'Scalar':
+    case 'Enum':
+      str += '\n'
+      break
+    case 'Object':
+      str += `${genSpace(1)}{\n${genObjectTypeStr(
+        output,
+        lineIndent + indent,
+      )}${genSpace(lineIndent)}}\n`
+      break
+    case 'Union':
+      str += `${genSpace(1)}{${output.types.reduce((typesStr, type) => {
+        return (
+          typesStr +
+          `${genSpace(lineIndent + indent)}...${genSpace(1)}on${genSpace(1)}${
+            type.ofName
+          }${genSpace(1)}{\n${genObjectTypeStr(
+            type,
+            lineIndent + indent * 2,
+          )}${genSpace(lineIndent + indent)}}\n`
+        )
+      }, '\n')}${genSpace(lineIndent)}}\n`
+      break
   }
   return str
 }
@@ -58,17 +81,25 @@ const _genTypeDefStr = (typeDef: TypeDef, indent: number) => {
  * @param indent - the indent of gql
  */
 export const genGQLStr = (operation: TypedOperation, indent = 2) => {
-  const returnTypeDef = operation.return.typeDef
   const descriptionStr = operation.description
     ? `# ${operation.description}\n`
     : ''
-  return `${descriptionStr}${operation.type}${genSpace(1)}${
-    operation.name
-  }${_genOuterArgumentsStr(operation.arguments)}${genSpace(1)}{\n${genSpace(
+
+  const operationType = operation.operationType
+  const operationName = operation.name
+  const allArgs: ArgTypeDef[] = []
+  const objectFieldTypeDefStr = _genObjectFieldTypeDefStr(
+    operation,
     indent,
-  )}${operation.name}${_genInnerArgumentsStr(operation.arguments)}${
-    returnTypeDef ? _genTypeDefStr(returnTypeDef, indent + indent) : '\n'
-  }}`
+    indent,
+    allArgs,
+  )
+  const outerArgsStr = `(${allArgs
+    .map(item => `${item.name}: ${item.type.name}`)
+    .join(', ')})`
+  return `${descriptionStr}${operationType}${genSpace(
+    1,
+  )}${operationName}${outerArgsStr}${genSpace(1)}{\n${objectFieldTypeDefStr}}`
 }
 
 /**

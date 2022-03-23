@@ -2,11 +2,11 @@ import { readFileSync } from 'fs'
 import { URL, fileURLToPath } from 'url'
 import { OperationTypeNode, buildSchema } from 'graphql'
 import {
-  getOperationFromGraphQLField,
   getOperationsBySchema,
   groupOperations,
+  normalizeGraphqlField,
   genArgsExample,
-  genReturnExample,
+  genOutputExample,
 } from '../src/operation'
 import { genSpace, genGQLStr, genGQLStrInGroup } from '../src/gql'
 
@@ -38,9 +38,9 @@ describe('genGQLStr', () => {
   Object.entries(fieldsMap).forEach(([operationType, graphQLFields]) => {
     Object.values(graphQLFields).forEach(graphQLField => {
       it(`a gql string for ${graphQLField.name} ${operationType} should be generated`, () => {
-        const operation = getOperationFromGraphQLField(graphQLField, schema, {})
+        const operation = normalizeGraphqlField(graphQLField, {})
         const gqlString = genGQLStr({
-          type: operationType as OperationTypeNode,
+          operationType: operationType as OperationTypeNode,
           ...operation,
         })
         expect(gqlString).toMatchSnapshot()
@@ -66,11 +66,11 @@ describe('genGQLStrInGroup', () => {
 /********** genExampleValue start ************/
 describe('genExampleValue', () => {
   allOperations.forEach(operation => {
-    it(`a arguments example for the operation ${operation.name} ${operation.type} should be generated`, () => {
-      expect(genArgsExample(operation.arguments, {})).toMatchSnapshot()
+    it(`a arguments example for the operation ${operation.name} ${operation.operationType} should be generated`, () => {
+      expect(genArgsExample(operation.args, {})).toMatchSnapshot()
     })
-    it(`a return data example for the operation ${operation.name} ${operation.type} should be generated`, () => {
-      expect(genReturnExample(operation.return, {})).toMatchSnapshot()
+    it(`a return data example for the operation ${operation.name} ${operation.operationType} should be generated`, () => {
+      expect(genOutputExample(operation.output, {})).toMatchSnapshot()
     })
   })
 })

@@ -1,51 +1,76 @@
-import type { ConstDirectiveNode, OperationTypeNode } from 'graphql'
+import type {
+  GraphQLArgument,
+  GraphQLEnumValue,
+  GraphQLField,
+  OperationTypeNode,
+} from 'graphql'
 
-export type Directive = ConstDirectiveNode
-
-export type Directives = ReadonlyArray<Directive>
-
-export type EnumTypeDef = {
+export interface BaseTypeDef {
   name: string
-  description: string
-  directives: Directives
-  value: unknown
-}[]
-
-export type FieldTypeDef = {
-  description: string
-  directives: Directives
-  type: string
-  typeName: string
-  typeDef: TypeDef
-  deprecationReason: string | null | undefined
+  ofName: string
 }
 
-export type UnionTypeDef = Record<string, FieldTypeDef>
-
-export type TypeDef = EnumTypeDef | UnionTypeDef | undefined
-
-export interface OperationArgument extends FieldTypeDef {
-  name: string
-  defaultValue?: unknown
+export interface ScalarTypeDef extends BaseTypeDef {
+  kind: 'Scalar'
 }
 
-export interface OperationReturn extends FieldTypeDef {
-  name: string
+export type EnumValueTypeDef = Pick<
+  GraphQLEnumValue,
+  'name' | 'description' | 'value' | 'deprecationReason'
+>
+
+export interface EnumTypeDef extends BaseTypeDef {
+  kind: 'Enum'
+  values: EnumValueTypeDef[]
 }
 
-export interface Operation {
-  name: string
-  description: string
-  deprecationReason: string | null | undefined
-  directives: Directives
-  arguments: OperationArgument[]
-  argumentsExample: Record<string, unknown>
-  return: OperationReturn
-  returnExample: Record<string, unknown>
+export interface ObjectTypeDef extends BaseTypeDef {
+  kind: 'Object'
+  fields: ObjectFieldTypeDef[]
+}
+
+export interface UnionTypeDef extends BaseTypeDef {
+  kind: 'Union'
+  types: ObjectTypeDef[]
+}
+
+export interface InputObjectTypeDef extends BaseTypeDef {
+  kind: 'InputObject'
+  fields: ArgTypeDef[]
+}
+
+export type OutputType =
+  | ScalarTypeDef
+  | EnumTypeDef
+  | ObjectTypeDef
+  | UnionTypeDef
+
+export type InputType = ScalarTypeDef | EnumTypeDef | InputObjectTypeDef
+
+export interface ArgTypeDef
+  extends Pick<
+    GraphQLArgument,
+    'name' | 'description' | 'defaultValue' | 'deprecationReason'
+  > {
+  type: InputType
+}
+
+export interface ObjectFieldTypeDef
+  extends Pick<
+    GraphQLField<unknown, unknown>,
+    'name' | 'description' | 'deprecationReason'
+  > {
+  args: ArgTypeDef[]
+  output: OutputType
+}
+
+export interface Operation extends ObjectFieldTypeDef {
+  argsExample: Record<string, unknown>
+  outputExample: Record<string, unknown>
 }
 
 export interface TypedOperation extends Operation {
-  type: OperationTypeNode
+  operationType: OperationTypeNode
 }
 
 export type ScalarMap = Record<string, unknown>
