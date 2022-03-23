@@ -59,6 +59,7 @@ const createGraphqlController = async (
   const mockedSchema = getMockedSchema(rawSchema)
   const graphqlHTTPOptions = {
     schema: mockedSchema,
+    graphiql: true,
   }
 
   // serve a playground
@@ -68,7 +69,8 @@ const createGraphqlController = async (
       operationName: string
     }
     const operation = getOperationsBySchema(rawSchema).find(
-      item => item.name === operationName && item.type === operationType,
+      item =>
+        item.name === operationName && item.operationType === operationType,
     )
     if (!operation) {
       res.json({
@@ -79,7 +81,7 @@ const createGraphqlController = async (
     }
     const query = genGQLStr(operation)
     const variables = genArgsExample(
-      operation.arguments,
+      operation.args,
       config.mock?.typeMapper || {},
     )
     const endpoint = `http://${ip}:${port}${BASE_PATH}`
@@ -98,51 +100,14 @@ const createGraphqlController = async (
     expressPlayground(playgroundOptions)(req, res, next)
   })
 
-  // serve ast
-  router.use(`${BASE_PATH}/ast`, async (req, res) => {
-    const rawSchema = await (await getRawSchema()).toConfig().types[0]
-    console.log(rawSchema)
-    res.send({
-      code: 200,
-      message: 'success',
-      data: rawSchema,
-    })
-  })
-
   // serve operations
   router.use(`${BASE_PATH}/operations`, async (req, res) => {
-    const rawSchema = await getRawSchema()
     const result = getOperationsBySchema(rawSchema, config.mock?.typeMapper)
     res.send({
       code: 200,
       message: 'success',
       data: result,
     })
-  })
-
-  // serve a way to refresh schema
-  router.use(`${BASE_PATH}/refresh`, async (req, res) => {
-    try {
-      graphqlHTTPOptions.schema = getMockedSchema(await getRawSchema())
-      res.status(200)
-      res.json({ success: true })
-      console.log(
-        chalk.green(
-          `[${req.socket.remoteAddress}]`,
-          dayjs().format('HH:mm:ss'),
-          'refresh successful',
-        ),
-      )
-    } catch (err) {
-      res.status(500)
-      console.log(
-        chalk.red(
-          `[${req.socket.remoteAddress}]`,
-          dayjs().format('HH:mm:ss'),
-          'refresh failed',
-        ),
-      )
-    }
   })
 
   // serve a proxy service
@@ -189,7 +154,6 @@ const createGraphqlController = async (
     }
   })
   router.use(BASE_PATH, graphqlHTTP(graphqlHTTPOptions))
-
   return router
 }
 

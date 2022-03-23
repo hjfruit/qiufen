@@ -4,7 +4,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve'
 import dts from 'rollup-plugin-dts'
 import pkg from './package.json'
 
-const input = './src/server.ts'
+const input = './src/index.ts'
 
 export default [
   {
