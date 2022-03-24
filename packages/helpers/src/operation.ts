@@ -51,7 +51,7 @@ function _normalizeGraphqlInputType(
     name: typeName,
     ofName: ofTypeName,
     fields:
-      refCount > 2
+      refCount > 3
         ? []
         : Object.values(namedType.getFields()).map(item => {
             return {
@@ -76,15 +76,18 @@ function _normalizeObjectType(
 ): ObjectTypeDef {
   const refCount = refChain.filter(item => item === type.name).length
 
+  if (refCount > 3) {
+    console.log(refChain)
+  }
   return {
     kind: 'Object',
     name: typeName,
     ofName: type.name,
     fields:
-      refCount > 2
+      refCount > 3
         ? []
         : Object.values(type.getFields()).map(item => {
-            return normalizeGraphqlField(item, scalarMap)
+            return normalizeGraphqlField(item, scalarMap, refChain)
           }),
   }
 }
@@ -140,6 +143,7 @@ function _normalizeGraphqlOutputType(
 export function normalizeGraphqlField(
   graphQLField: GraphQLField<unknown, unknown>,
   scalarMap: ScalarMap,
+  refChain: string[] = [],
 ): Operation {
   const args: Operation['args'] = graphQLField?.args.map(item => {
     return {
@@ -154,7 +158,7 @@ export function normalizeGraphqlField(
 
   const output: Operation['output'] = _normalizeGraphqlOutputType(
     graphQLField.type,
-    [],
+    refChain,
     scalarMap,
   )
   const outputExample = genOutputExample(output, scalarMap)
