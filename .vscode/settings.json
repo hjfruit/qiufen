@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["commitlint", "deepmerge"]
+  "cSpell.words": ["commitlint", "deepmerge"],
+  "editor.formatOnSave": true
 }

@@ -1,6 +1,6 @@
 const config = {
   development: {
-    host: 'http://192.168.10.25:10005',
+    host: 'http://localhost:9406',
   },
   test: {
     host: '',

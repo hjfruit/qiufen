@@ -9,10 +9,9 @@ import obj2str from 'stringify-object'
 import styles from './index.module.less'
 import type { IAceEditorProps } from 'react-ace'
 import type {
-  OperationArgument,
   TypedOperation,
-  OperationReturn,
-  Directives,
+  ArgTypeDef,
+  ObjectFieldTypeDef,
 } from '@fruits-chain/graphql-kit-helpers'
 import type { ColumnsType } from 'antd/lib/table'
 import type { FC } from 'react'
@@ -34,56 +33,99 @@ interface IProps {
   operation: TypedOperation
 }
 
-type ColumnRecord = {
-  name: string
-  description: string
-  isEnum: boolean
+type ArgColumnRecord = {
   key: string
-  directives: Directives
-  deprecationReason: OperationReturn['deprecationReason']
-  children: ColumnRecord[] | null
+  name: ArgTypeDef['name']
+  type: ArgTypeDef['type']['name']
+  defaultValue: ArgTypeDef['defaultValue']
+  description: ArgTypeDef['description']
+  deprecationReason?: ArgTypeDef['deprecationReason']
+  children: ArgColumnRecord[] | null
 }
 
-const convertDocDataToTreeData = (
-  operation: (OperationArgument | OperationReturn)[],
-  keyPrefix = '',
-) => {
-  const result: ColumnRecord[] = operation.map(({ typeDef, ...originData }) => {
-    const isEnum = Array.isArray(typeDef)
+const getArgsTreeData = (args: ArgTypeDef[], keyPrefix = '') => {
+  const result: ArgColumnRecord[] = args.map(({ type, ...originData }) => {
     const key = `${keyPrefix}${originData.name}`
+    let children: ArgColumnRecord['children'] = []
+    switch (type.kind) {
+      case 'Scalar':
+        children = null
+        break
+      case 'InputObject':
+        children = getArgsTreeData(type.fields, key)
+        break
+      case 'Enum':
+        children = type.values.map(item => ({
+          key: key + item.value,
+          name: item.name,
+          type: '',
+          defaultValue: item.value,
+          description: item.description,
+          deprecationReason: item.deprecationReason,
+          children: null,
+        }))
+        break
+    }
     return {
       ...originData,
-      isEnum,
       key,
-      children: !typeDef
-        ? null
-        : convertDocDataToTreeData(
-            isEnum
-              ? typeDef.map(item => ({
-                  deprecationReason: undefined,
-                  name: (item.value as string | number).toString(),
-                  description: item.description,
-                  directives: item.directives,
-                  type: '',
-                  typeName: '',
-                  typeDef: undefined,
-                }))
-              : Object.entries(typeDef).map(([argName, argInfo]) => {
-                  return {
-                    name: argName,
-                    ...argInfo,
-                  }
-                }),
-            key,
-          ),
+      type: type.name,
+      children,
     }
   })
   return result
 }
 
+const getObjectFieldsTreeData = (
+  objectFields: ObjectFieldTypeDef[],
+  keyPrefix = '',
+) => {
+  const result: ArgColumnRecord[] = objectFields.map(
+    ({ output, ...originData }) => {
+      const key = `${keyPrefix}${originData.name}`
+      let children: ArgColumnRecord['children'] = []
+      switch (output.kind) {
+        case 'Scalar':
+          children = null
+          break
+        case 'Object':
+          children = getObjectFieldsTreeData(output.fields, key)
+          break
+        case 'Enum':
+          children = output.values.map(item => ({
+            key: key + item.value,
+            name: item.name,
+            type: '',
+            defaultValue: item.value,
+            description: item.description,
+            deprecationReason: item.deprecationReason,
+            children: null,
+          }))
+          break
+        case 'Union':
+          output.types.forEach(type => {
+            children = [
+              ...(children || []),
+              ...getObjectFieldsTreeData(type.fields, key),
+            ]
+            type.fields
+          })
+      }
+      return {
+        ...originData,
+        key,
+        defaultValue: null,
+        type: output.name,
+        children,
+      }
+    },
+  )
+  return result
+}
+
 const columnGen = (
   field: 'arguments' | 'return',
-): ColumnsType<ColumnRecord> => {
+): ColumnsType<ArgColumnRecord> => {
   return [
     {
       title: 'name',
@@ -158,17 +200,17 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
     'EDITOR',
   )
 
-  const argumentsData = useMemo(() => {
-    return convertDocDataToTreeData(operation.arguments)
-  }, [operation.arguments])
-  const argumentsColumns: ColumnsType<ColumnRecord> = useMemo(() => {
+  const argsTreeData = useMemo(() => {
+    return getArgsTreeData(operation.args)
+  }, [operation.args])
+  const argsColumns: ColumnsType<ArgColumnRecord> = useMemo(() => {
     return columnGen('arguments')
   }, [])
 
-  const returnData = useMemo(() => {
-    return convertDocDataToTreeData([operation.return])
-  }, [operation.return])
-  const returnColumns: ColumnsType<ColumnRecord> = useMemo(() => {
+  const objectFieldsTreeData = useMemo(() => {
+    return getObjectFieldsTreeData([operation])
+  }, [])
+  const objectFieldsColumns: ColumnsType<ArgColumnRecord> = useMemo(() => {
     return columnGen('return')
   }, [])
 
@@ -180,7 +222,7 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
     window.open(
       `${config.host}/graphql/playground?operationName=${encodeURIComponent(
         operation.name,
-      )}&operationType=${encodeURIComponent(operation.type)}`,
+      )}&operationType=${encodeURIComponent(operation.operationType)}`,
       '_blank',
     )
   }
@@ -224,16 +266,16 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
           />
         </Space>
       </div>
-      <div>Operation type: {operation.type}</div>
-      {!!argumentsData.length && (
+      <div>Operation type: {operation.operationType}</div>
+      {!!argsTreeData.length && (
         <>
           <div>Params: </div>
           {mode === 'TABLE' ? (
             <Table
-              columns={argumentsColumns}
+              columns={argsColumns}
               defaultExpandAllRows
               className={styles.table}
-              dataSource={argumentsData}
+              dataSource={argsTreeData}
               pagination={false}
               bordered
             />
@@ -244,7 +286,7 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
               width="100%"
               readOnly
               maxLines={Infinity}
-              value={obj2str(operation.argumentsExample)}
+              value={obj2str(operation.argsExample)}
             />
           )}
         </>
@@ -252,10 +294,10 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
       <div>Response: </div>
       {mode === 'TABLE' ? (
         <Table
-          columns={returnColumns}
+          columns={objectFieldsColumns}
           defaultExpandAllRows
           className={styles.table}
-          dataSource={returnData}
+          dataSource={objectFieldsTreeData}
           pagination={false}
           bordered
         />
@@ -266,7 +308,7 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
           width="100%"
           readOnly
           maxLines={Infinity}
-          value={obj2str(operation.returnExample)}
+          value={obj2str(operation.outputExample)}
           editorProps={{
             $blockScrolling: false,
           }}

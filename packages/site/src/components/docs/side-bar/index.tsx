@@ -51,11 +51,11 @@ const DocSidebar: FC<IProps> = ({
               // search by name
               pattern.test(item.name) ||
               // search by description
-              pattern.test(item.description) ||
+              pattern.test(item.description || '') ||
               // search by arg type
-              item.arguments.some(arg => pattern.test(arg.type)) ||
+              item.args.some(arg => pattern.test(arg.type.name)) ||
               // search by return type
-              pattern.test(item.return.type)
+              pattern.test(item.output.name)
             )
           })
         }
@@ -83,7 +83,8 @@ const DocSidebar: FC<IProps> = ({
                     key={index}
                     className={classnames(styles.operationItem, {
                       [styles.active]:
-                        operation.type + operation.name === selectedOperationId,
+                        operation.operationType + operation.name ===
+                        selectedOperationId,
                     })}
                     onClick={() => {
                       onSelect(operation)
@@ -115,7 +116,11 @@ const DocSidebar: FC<IProps> = ({
     const activeKey: CollapseProps['defaultActiveKey'] = []
     // use [].some to break in advance
     Object.entries(groupedOperations).some(([groupName, items]) => {
-      if (items.some(item => item.type + item.name === selectedOperationId)) {
+      if (
+        items.some(
+          item => item.operationType + item.name === selectedOperationId,
+        )
+      ) {
         activeKey.push(groupName)
       }
     })

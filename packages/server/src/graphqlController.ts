@@ -59,7 +59,6 @@ const createGraphqlController = async (
   const mockedSchema = getMockedSchema(rawSchema)
   const graphqlHTTPOptions = {
     schema: mockedSchema,
-    graphiql: true,
   }
 
   // serve a playground

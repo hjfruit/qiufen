@@ -50,7 +50,7 @@ const Doc: NextPageWithLayout = () => {
   const onSelect: SideBarProps['onSelect'] = useCallback(
     operation => {
       router.push(
-        `/docs?operationType=${operation.type}&operationName=${operation.name}`,
+        `/docs?operationType=${operation.operationType}&operationName=${operation.name}`,
       )
     },
     [updateState],
@@ -96,11 +96,12 @@ const Doc: NextPageWithLayout = () => {
     let selectedOperationId = operationType + operationName
     const selectedOperation =
       operations.find(
-        operation => operation.type + operation.name === selectedOperationId,
+        operation =>
+          operation.operationType + operation.name === selectedOperationId,
       ) ||
       // if no operation could be found by selectedOperationId, set operations[0] as default
       (() => {
-        selectedOperationId = operations[0].type + operations[0].name
+        selectedOperationId = operations[0].operationType + operations[0].name
         return operations[0]
       })()
     content = (

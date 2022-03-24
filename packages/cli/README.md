@@ -81,4 +81,5 @@ interface PlaygroundConfig {
 ## FAQ
 
 - I run `yarn gk start` successfully, but i can't access the doc service in chrome.
+
   Be sure that your port is not in unsafe port list of chrome.

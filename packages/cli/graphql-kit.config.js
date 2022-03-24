@@ -3,8 +3,11 @@ module.exports = {
   endpoint: {
     url: 'http://192.168.10.233:9406/graphql',
   },
+  schemaPolicy: 'remote',
+  localSchemaFile: '../helpers/__tests__/schema.graphql',
   mock: {
     enable: true,
+    schemaFiles: [],
     typeMapper: {
       Int: () => null,
       String: () => null,
