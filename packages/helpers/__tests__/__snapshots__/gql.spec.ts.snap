@@ -15,7 +15,7 @@ Object {
 `;
 
 exports[`genGQLStr a gql string for role query should be generated 1`] = `
-"query role(a: ID, b: String!, a1: ID, b1: ID) {
+"query role($a: ID, $b: String!, $a1: ID, $b1: ID) {
   role(a: $a, b: $b) {
     ... on Student {
       sex
@@ -33,7 +33,7 @@ exports[`genGQLStr a gql string for role query should be generated 1`] = `
 exports[`genGQLStrInGroup gql strings for group default should be generated 1`] = `
 "# default 
 
-query role(a: ID, b: String!, a1: ID, b1: ID) {
+query role($a: ID, $b: String!, $a1: ID, $b1: ID) {
   role(a: $a, b: $b) {
     ... on Student {
       sex

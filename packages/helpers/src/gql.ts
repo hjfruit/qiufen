@@ -94,9 +94,9 @@ export const genGQLStr = (operation: TypedOperation, indent = 2) => {
     indent,
     allArgs,
   )
-  const outerArgsStr = `(${allArgs
-    .map(item => `${item.name}: ${item.type.name}`)
-    .join(', ')})`
+  const outerArgsStr = allArgs.length
+    ? `(${allArgs.map(item => `$${item.name}: ${item.type.name}`).join(', ')})`
+    : ''
   return `${descriptionStr}${operationType}${genSpace(
     1,
   )}${operationName}${outerArgsStr}${genSpace(1)}{\n${objectFieldTypeDefStr}}`
