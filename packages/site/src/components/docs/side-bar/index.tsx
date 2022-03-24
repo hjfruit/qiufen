@@ -1,6 +1,10 @@
 import React, { memo, useMemo, useState } from 'react'
 import { Input, Collapse, Tooltip, Space } from 'antd'
-import { UpCircleOutlined, CopyOutlined } from '@ant-design/icons'
+import {
+  UpCircleOutlined,
+  MinusCircleOutlined,
+  CopyOutlined,
+} from '@ant-design/icons'
 import { useThrottleFn } from '@fruits-chain/hooks-laba'
 import classnames from 'classnames'
 import {
@@ -127,6 +131,8 @@ const DocSidebar: FC<IProps> = ({
     return activeKey
   }, [])
 
+  const [activeKey, setActiveKey] = useState(defaultActiveKey)
+
   return (
     <div className={styles.sidebar}>
       <Input.Search
@@ -138,8 +144,27 @@ const DocSidebar: FC<IProps> = ({
         value={keyword}
       />
       <div className={styles.main} id="sideBar" onScroll={onScroll.run}>
-        <Collapse defaultActiveKey={defaultActiveKey}>{contentJSX}</Collapse>
+        <Collapse
+          activeKey={activeKey}
+          onChange={key => {
+            if (Array.isArray(key)) {
+              setActiveKey(key)
+            }
+          }}>
+          {contentJSX}
+        </Collapse>
       </div>
+      <Tooltip title="Collapse all">
+        <MinusCircleOutlined
+          style={{ bottom: 100 }}
+          className={classnames(styles.topBtn, {
+            [styles.show]: activeKey.length,
+          })}
+          onClick={() => {
+            setActiveKey([])
+          }}
+        />
+      </Tooltip>
       <Tooltip title="Back to top">
         <UpCircleOutlined
           className={classnames(styles.topBtn, {

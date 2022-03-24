@@ -86,7 +86,7 @@ const getObjectFieldsTreeData = (
       let children: ArgColumnRecord['children'] = []
       switch (output.kind) {
         case 'Scalar':
-          children = null
+          children = []
           break
         case 'Object':
           children = getObjectFieldsTreeData(output.fields, key)
@@ -108,7 +108,6 @@ const getObjectFieldsTreeData = (
               ...(children || []),
               ...getObjectFieldsTreeData(type.fields, key),
             ]
-            type.fields
           })
       }
       return {
@@ -116,7 +115,7 @@ const getObjectFieldsTreeData = (
         key,
         defaultValue: null,
         type: output.name,
-        children,
+        children: children.length > 0 ? children : null,
       }
     },
   )
