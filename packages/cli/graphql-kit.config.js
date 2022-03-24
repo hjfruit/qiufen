@@ -1,7 +1,7 @@
 module.exports = {
   port: 9406,
   endpoint: {
-    url: 'http://192.168.10.233:9406/graphql',
+    url: 'http://192.168.10.233:10004/graphql',
   },
   schemaPolicy: 'remote',
   localSchemaFile: '../helpers/__tests__/schema.graphql',

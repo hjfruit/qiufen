@@ -76,9 +76,6 @@ function _normalizeObjectType(
 ): ObjectTypeDef {
   const refCount = refChain.filter(item => item === type.name).length
 
-  if (refCount > 3) {
-    console.log(refChain)
-  }
   return {
     kind: 'Object',
     name: typeName,
