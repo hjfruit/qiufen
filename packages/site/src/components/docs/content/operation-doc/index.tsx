@@ -219,7 +219,7 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
 
   const handleDebug = () => {
     window.open(
-      `${config.host}/graphql/playground?operationName=${encodeURIComponent(
+      `${config.host}/playground?operationName=${encodeURIComponent(
         operation.name,
       )}&operationType=${encodeURIComponent(operation.operationType)}`,
       '_blank',

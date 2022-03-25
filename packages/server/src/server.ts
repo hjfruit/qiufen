@@ -9,6 +9,7 @@ import { loadSchema } from '@graphql-tools/load'
 import { stitchSchemas } from '@graphql-tools/stitch'
 import createGraphqlController from './graphqlController'
 import createDocController from './docController'
+import createPlaygroundController from './playgroundController'
 import getIPAddress from './utils/getIPAddress'
 import type { GraphqlKitConfig, MockConfig } from './interface'
 import type { Server } from 'http'
@@ -112,10 +113,35 @@ const startServer = (configPath: string): Promise<Server> => {
 
       app.use(bodyParser.json())
 
-      const graphqlController = await createGraphqlController(config, ip)
+      const { endpoint, schemaPolicy, localSchemaFile, mock } = config
+      const getRawSchema = async () => {
+        try {
+          const schema = await getGraphQLSchema({
+            schemaPolicy,
+            localSchemaFile,
+            endpointUrl: endpoint.url,
+            mockSchemaFiles: mock?.schemaFiles,
+          })
+          return schema
+        } catch (err) {
+          console.log(chalk.red(err))
+          process.exit(1)
+        }
+      }
+
+      const rawSchema = await getRawSchema()
+
+      const graphqlController = await createGraphqlController(config, rawSchema)
       app.use(graphqlController)
 
-      const docController = await createDocController()
+      const playgroundController = createPlaygroundController(
+        rawSchema,
+        config,
+        ip,
+      )
+      app.use(playgroundController)
+
+      const docController = createDocController()
       app.use(docController)
 
       const server = app.listen(port, '0.0.0.0', () => {

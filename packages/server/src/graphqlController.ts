@@ -4,17 +4,11 @@ import { addMocksToSchema } from '@graphql-tools/mock'
 import { createProxyMiddleware } from 'http-proxy-middleware'
 import chalk from 'chalk'
 import dayjs from 'dayjs'
-import {
-  genGQLStr,
-  genArgsExample,
-  getOperationsBySchema,
-} from '@fruits-chain/graphql-kit-helpers'
-import expressPlayground from 'graphql-playground-middleware-express'
-import { getGraphQLSchema } from './server'
+import { getOperationsBySchema } from '@fruits-chain/graphql-kit-helpers'
 import type { GraphqlKitConfig, IncomingMessageWithBody } from './interface'
-import type { GraphQLSchema, OperationTypeNode } from 'graphql'
+import type { GraphQLSchema } from 'graphql'
 
-const BASE_PATH = '/graphql'
+export const BASE_PATH = '/graphql'
 
 /**
  * create a graphql controller
@@ -23,13 +17,10 @@ const BASE_PATH = '/graphql'
  */
 const createGraphqlController = async (
   config: GraphqlKitConfig,
-  ip: string,
+  rawSchema: GraphQLSchema,
 ) => {
   const router = express.Router()
-
-  const { port, endpoint, schemaPolicy, localSchemaFile, mock, playground } =
-    config
-
+  const { endpoint, mock } = config
   const resolvers = () => {
     return {
       ...mock?.resolvers,
@@ -40,64 +31,10 @@ const createGraphqlController = async (
     return addMocksToSchema({ schema, mocks: mock?.typeMapper, resolvers })
   }
 
-  const getRawSchema = async () => {
-    try {
-      const schema = await getGraphQLSchema({
-        schemaPolicy,
-        localSchemaFile,
-        endpointUrl: endpoint.url,
-        mockSchemaFiles: mock?.schemaFiles,
-      })
-      return schema
-    } catch (err) {
-      console.log(chalk.red(err))
-      process.exit(1)
-    }
-  }
-
-  const rawSchema = await getRawSchema()
   const mockedSchema = getMockedSchema(rawSchema)
   const graphqlHTTPOptions = {
     schema: mockedSchema,
   }
-
-  // serve a playground
-  router.get(`${BASE_PATH}/playground`, (req, res, next) => {
-    const { operationType, operationName } = req.query as {
-      operationType: OperationTypeNode
-      operationName: string
-    }
-    const operation = getOperationsBySchema(rawSchema).find(
-      item =>
-        item.name === operationName && item.operationType === operationType,
-    )
-    if (!operation) {
-      res.json({
-        status: 404,
-        message: `${operationType} ${operationName} is not found`,
-      })
-      return
-    }
-    const query = genGQLStr(operation)
-    const variables = genArgsExample(
-      operation.args,
-      config.mock?.typeMapper || {},
-    )
-    const endpoint = `http://${ip}:${port}${BASE_PATH}`
-    const playgroundOptions = {
-      endpoint,
-      tabs: [
-        {
-          name: 'debug',
-          endpoint,
-          query,
-          variables: JSON.stringify(variables, null, 2),
-          headers: playground?.headers,
-        },
-      ],
-    }
-    expressPlayground(playgroundOptions)(req, res, next)
-  })
 
   // serve operations
   router.use(`${BASE_PATH}/operations`, async (req, res) => {

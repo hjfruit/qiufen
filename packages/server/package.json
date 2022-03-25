@@ -15,7 +15,8 @@
     "build": "run-s lint clean build-bundle"
   },
   "files": [
-    "dist"
+    "dist",
+    "public"
   ],
   "keywords": [
     "graphql-kit",
@@ -45,7 +46,7 @@
     "dayjs": "^1.10.7",
     "express": "^4.17.2",
     "express-graphql": "^0.12.0",
-    "graphql-playground-middleware-express": "1.7.22",
+    "graphql-playground-html": "^1.6.30",
     "graphql-tools": "^8.2.0",
     "http-proxy-middleware": "^2.0.1"
   },

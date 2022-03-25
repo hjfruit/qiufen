@@ -1,26 +1,28 @@
 # 0.0.4
 
-2022-02-10
+2022-03-24
 
-- 🎸(cli) check command
-- 🎸(docs) collapse all groups in 's sidebar by default
-- 🐛(docs) the type of enum is unclear
-- 💡(config) change the structure
+- 🎸(feat) new commands like `check`.
+- 🎸(feat) sidebar collapse.
+- 💡(refactor) refactor all helpers.
+- 🐛(fix) get incorrect gql when type is union.
+- 🐛(fix) get incorrect gql when existing nest args.
+- 🐛(fix) failed to request several assets of playground.
 
 # 0.0.3
 
 2022-02-09
 
-- 🎸 gen typeMapper automatically.
-- 🎸 support custom schemaFiles mock config option.
-- 🎸 watch all config deps.
+- 🎸(feat) gen typeMapper automatically.
+- 🎸(feat) support custom schemaFiles mock config option.
+- 🎸(feat) watch all config deps.
 
 # 0.0.2
 
 2022-02-07
 
-- 🎸 mock server.
-- 🎸 api docs.
+- 🎸(feat) mock server.
+- 🎸(feat) api docs.
 
 # 0.0.1
 
