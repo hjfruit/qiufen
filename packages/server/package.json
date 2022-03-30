@@ -39,7 +39,6 @@
     "@fruits-chain/graphql-kit-helpers": "^0.0.2",
     "@fruits-chain/graphql-kit-site": "^0.0.3",
     "@graphql-tools/load": "^7.5.0",
-    "@graphql-tools/mock": "^8.5.0",
     "@graphql-tools/stitch": "^8.4.3",
     "@graphql-tools/url-loader": "^7.7.0",
     "body-parser": "^1.19.1",

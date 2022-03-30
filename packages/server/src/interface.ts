@@ -1,4 +1,5 @@
-import type { addMocksToSchema } from '@graphql-tools/mock'
+import type { IResolvers } from '@graphql-tools/utils'
+import type { ScalarMap } from '@fruits-chain/graphql-kit-helpers'
 import type { IncomingMessage } from 'http'
 
 export interface IncomingMessageWithBody extends IncomingMessage {
@@ -15,8 +16,6 @@ export interface PlaygroundConfig {
   headers?: Record<string, string>
 }
 
-export type IMockOptions = Parameters<typeof addMocksToSchema>[0]
-
 /** schema polity type */
 export type SchemaPolicy = 'local' | 'remote'
 
@@ -28,10 +27,10 @@ export interface MockConfig {
   schemaFiles?: string[]
   /** graphql operation name which will be mocked, ... means all operations, if unset, ... will be used */
   whiteList?: string[] | '...'
-  /** value map rules, you should add all your scalar type mappers here or you'll get error */
-  typeMapper: IMockOptions['mocks']
+  /** scalar value map rules, you should add all your scalar type here or you'll get an error */
+  scalarMap: ScalarMap
   /** graphql resolvers for operations, you can custom operation response here */
-  resolvers?: IMockOptions['resolvers']
+  resolvers?: IResolvers
 }
 
 export interface GraphqlKitConfig {

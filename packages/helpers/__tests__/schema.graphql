@@ -1,40 +1,30 @@
-"""
-人
-"""
-interface Role {
-  """
-  姓名
-  """
-  name: String
-}
-type A {
-  test: String
-}
+directive @mock(val: Val, len: Int) on FIELD
+
+scalar Val
+
 """
 学生
 """
-type Student implements Role {
+interface Student {
+  name: String
   sex: String
+  books: [String]
+}
+
+type Book {
   name: String
 }
 
-"""
-老师
-"""
-type Teacher implements Role {
-  sex: String
+input Test {
   name: String
 }
 
-extend type Teacher {
-  """
-  职级
-  """
-  level(a: ID, b: ID): String
+type A implements Student {
+  name: String
+  sex: String
+  books: [String]
 }
-
-union User = Student | Teacher
 
 type Query {
-  role(a: ID, b: String!): User
+  student(test: Test): [A]
 }

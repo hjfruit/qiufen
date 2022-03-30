@@ -64,8 +64,8 @@ interface MockConfig {
   schemaFiles?: string[]
   /** graphql operation name which will be mocked, ... means all operations, if unset, ... will be used */
   whiteList?: string[] | '...'
-  /** value map rules, you should add all your scalar type mappers here or you'll get error */
-  typeMapper: IMockOptions['mocks']
+  /** value map rules, you should add all your scalar type mappers here or you'll get an error */
+  scalarMap: IMockOptions['mocks']
   /** graphql resolvers for operations, you can custom operation response here */
   resolvers?: IMockOptions['resolvers']
 }

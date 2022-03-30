@@ -3,12 +3,12 @@ module.exports = {
   endpoint: {
     url: 'http://192.168.10.233:10004/graphql',
   },
-  schemaPolicy: 'remote',
+  schemaPolicy: 'local',
   localSchemaFile: '../helpers/__tests__/schema.graphql',
   mock: {
     enable: true,
     schemaFiles: [],
-    typeMapper: {
+    scalarMap: {
       String: () => 'str',
       ID: () => 'id',
       Int: () => 1,
@@ -18,6 +18,22 @@ module.exports = {
       DateTime: () => Date.now(),
       Long: () => 101,
       Object: () => ({}),
+    },
+    resolvers: {
+      Query: {
+        student() {
+          return [
+            {
+              name: '1',
+              books: [],
+            },
+            {
+              name: '2',
+              books: [],
+            },
+          ]
+        },
+      },
     },
   },
 }

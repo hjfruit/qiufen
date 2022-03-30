@@ -41,7 +41,7 @@ const createPlaygroundController = (
       return
     }
     const query = genGQLStr(operation)
-    const variables = genArgsExample(operation.args, mock?.typeMapper || {})
+    const variables = genArgsExample(operation.args, mock?.scalarMap || {})
     const endpoint = `http://${ip}:${config.port}${BASE_PATH}`
     const playgroundOptions: RenderPageOptions = {
       endpoint,

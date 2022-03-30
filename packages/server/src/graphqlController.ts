@@ -1,12 +1,12 @@
 import express from 'express'
 import { graphqlHTTP } from 'express-graphql'
-import { addMocksToSchema } from '@graphql-tools/mock'
 import { createProxyMiddleware } from 'http-proxy-middleware'
 import chalk from 'chalk'
 import dayjs from 'dayjs'
 import { getOperationsBySchema } from '@fruits-chain/graphql-kit-helpers'
-import type { GraphqlKitConfig, IncomingMessageWithBody } from './interface'
+import { addMocksToSchema } from './directives/mock'
 import type { GraphQLSchema } from 'graphql'
+import type { GraphqlKitConfig, IncomingMessageWithBody } from './interface'
 
 export const BASE_PATH = '/graphql'
 
@@ -21,24 +21,10 @@ const createGraphqlController = async (
 ) => {
   const router = express.Router()
   const { endpoint, mock } = config
-  const resolvers = () => {
-    return {
-      ...mock?.resolvers,
-    }
-  }
-
-  function getMockedSchema(schema: GraphQLSchema) {
-    return addMocksToSchema({ schema, mocks: mock?.typeMapper, resolvers })
-  }
-
-  const mockedSchema = getMockedSchema(rawSchema)
-  const graphqlHTTPOptions = {
-    schema: mockedSchema,
-  }
 
   // serve operations
   router.use(`${BASE_PATH}/operations`, async (req, res) => {
-    const result = getOperationsBySchema(rawSchema, config.mock?.typeMapper)
+    const result = getOperationsBySchema(rawSchema, mock?.scalarMap)
     res.send({
       code: 200,
       message: 'success',
@@ -46,7 +32,15 @@ const createGraphqlController = async (
     })
   })
 
-  // serve a proxy service
+  const mockedSchema = addMocksToSchema({
+    schema: rawSchema,
+    scalarMap: mock?.scalarMap,
+    resolvers: mock?.resolvers,
+  })
+  const graphqlHTTPOptions = {
+    schema: mockedSchema,
+  }
+  // create a proxy to backend service
   const proxyMiddleware = createProxyMiddleware({
     target: endpoint.url,
     pathRewrite: {
@@ -61,6 +55,7 @@ const createGraphqlController = async (
       }
     },
   })
+  // handle graphql requests
   router.post(BASE_PATH, (req, res, next) => {
     if (
       mock?.enable &&
@@ -90,6 +85,7 @@ const createGraphqlController = async (
     }
   })
   router.use(BASE_PATH, graphqlHTTP(graphqlHTTPOptions))
+
   return router
 }
 

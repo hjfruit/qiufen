@@ -63,6 +63,7 @@ async function getGraphQLSchema({
       throw new Error(`unknown schemaPolicy ${schemaPolicy}`)
   }
   return stitchSchemas({
+    mergeDirectives: true,
     subschemas: [
       { schema: backendSchema },
       ...mockSchemaFiles.map((file, index) => {
@@ -130,7 +131,6 @@ const startServer = (configPath: string): Promise<Server> => {
       }
 
       const rawSchema = await getRawSchema()
-
       const graphqlController = await createGraphqlController(config, rawSchema)
       app.use(graphqlController)
 

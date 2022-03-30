@@ -43,9 +43,9 @@ const getConfigFilePath = (guard?: boolean) => {
   return configFilePath
 }
 
-// gen typeMapper automatically
-const genTypeMapper = (typeMap: ReturnType<GraphQLSchema['getTypeMap']>) => {
-  const mapper: MockConfig['typeMapper'] = {}
+// gen scalarMap automatically
+const genScalarMap = (typeMap: ReturnType<GraphQLSchema['getTypeMap']>) => {
+  const mapper: MockConfig['scalarMap'] = {}
   Object.values(typeMap).forEach(type => {
     const typeName = type.name
     if (
@@ -66,13 +66,13 @@ program
   .action(() => {
     const prompt = inquirer.createPromptModule()
     prompt(initQs).then(async (answers: InitQsAnswers) => {
-      let typeMapper
+      let scalarMap
       try {
         const graphqlSchema = await getGraphQLSchema({
           endpointUrl: answers.endpoint.url,
         })
         const typeMap = graphqlSchema.getTypeMap()
-        typeMapper = genTypeMapper(typeMap)
+        scalarMap = genScalarMap(typeMap)
       } catch (err) {
         console.log(chalk.red(err))
         process.exit(1)
@@ -82,7 +82,7 @@ program
         port: +answers.port,
         mock: {
           ...answers.mock,
-          typeMapper,
+          scalarMap,
         },
       }
 
@@ -172,7 +172,7 @@ program
     const configFilePath = getConfigFilePath(true)
     const config = require(configFilePath) as GraphqlKitConfig
 
-    // check typeMapper
+    // check scalarMap
     try {
       const graphqlSchema = await getGraphQLSchema({
         schemaPolicy: config.schemaPolicy,
@@ -181,8 +181,8 @@ program
         mockSchemaFiles: config.mock?.schemaFiles,
       })
       const typeMap = graphqlSchema.getTypeMap()
-      const existScalars = Object.keys(config.mock?.typeMapper || {})
-      const currScalars = Object.keys(genTypeMapper(typeMap))
+      const existScalars = Object.keys(config.mock?.scalarMap || {})
+      const currScalars = Object.keys(genScalarMap(typeMap))
       const unionScalars = Array.from(new Set(currScalars.concat(existScalars)))
       const scalarsShouldBeAdded: string[] = []
       const scalarShouldBeRemoved: string[] = []
@@ -195,19 +195,19 @@ program
       })
       if (scalarsShouldBeAdded.length) {
         log.fail(
-          `${scalarsShouldBeAdded.length} scalars [${scalarsShouldBeAdded}] should be added into your typeMapper`,
+          `${scalarsShouldBeAdded.length} scalars [${scalarsShouldBeAdded}] should be added into your scalarMap`,
         )
       }
       if (scalarShouldBeRemoved.length) {
         log.fail(
-          `${scalarShouldBeRemoved.length} scalars [${scalarShouldBeRemoved}] should be removed from your typeMapper`,
+          `${scalarShouldBeRemoved.length} scalars [${scalarShouldBeRemoved}] should be removed from your scalarMap`,
         )
       }
       if (
         scalarShouldBeRemoved.length === 0 &&
         scalarsShouldBeAdded.length === 0
       ) {
-        log.pass(`typeMapper`)
+        log.pass(`scalarMap`)
       }
     } catch (err) {
       console.log(chalk.red(err))
