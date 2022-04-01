@@ -74,12 +74,12 @@ const createGraphqlController = async (
   })
   // handle graphql requests
   router.post(BASE_PATH, (req, res, next) => {
-    const operation = parse(req.body.query, {
-      noLocation: true,
-    }).definitions.find(item => item.kind === Kind.OPERATION_DEFINITION) as
-      | OperationDefinitionNode
-      | undefined
     const operationMockDirectiveEnable = () => {
+      const operation = parse(req.body.query, {
+        noLocation: true,
+      }).definitions.find(item => item.kind === Kind.OPERATION_DEFINITION) as
+        | OperationDefinitionNode
+        | undefined
       return (
         operation?.directives
           ?.find(item => item.name.value === 'mock')
@@ -88,7 +88,11 @@ const createGraphqlController = async (
           | undefined
       )?.value
     }
-    if (mock?.enable && operationMockDirectiveEnable()) {
+    const isIntrospectionQuery = req.body.operationName === 'IntrospectionQuery'
+    if (
+      (mock?.enable && operationMockDirectiveEnable()) ||
+      isIntrospectionQuery
+    ) {
       console.log(
         chalk.red(
           `[${req.socket.remoteAddress}]`,
