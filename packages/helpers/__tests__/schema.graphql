@@ -1,9 +1,5 @@
-directive @mock(val: Val, len: Int) on FIELD
-
-scalar Val
-
 """
-学生
+测试: 学生
 """
 interface Student {
   name: String

@@ -25,10 +25,10 @@ export interface MockConfig {
   enable: boolean
   /** schema files used for dev env, valid when enable is true */
   schemaFiles?: string[]
-  /** graphql operation name which will be mocked, ... means all operations, if unset, ... will be used */
-  whiteList?: string[] | '...'
   /** scalar value map rules, you should add all your scalar type here or you'll get an error */
   scalarMap: ScalarMap
+  /** context for mock script in mock directive */
+  context?: Record<string, unknown>
   /** graphql resolvers for operations, you can custom operation response here */
   resolvers?: IResolvers
 }

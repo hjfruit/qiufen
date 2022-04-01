@@ -1,13 +1,21 @@
 module.exports = {
   port: 9406,
   endpoint: {
-    url: 'http://192.168.10.233:10004/graphql',
+    url: 'http://192.168.10.233:9406/graphql',
   },
-  schemaPolicy: 'local',
-  localSchemaFile: '../helpers/__tests__/schema.graphql',
+  schemaPolicy: 'remote',
+  playground: {
+    headers: {
+      appversioncode: 33,
+      Authorization:
+        'kktJLMPhAtduLA0Jl5dXqoT74nxpPLJDoYw89mMaz6nXlqgV06NtjOvr9CurARFfuki7QAMo8UTVAx+mDbH9pg==',
+      'app-version': 33,
+      platform: 'ios',
+    },
+  },
   mock: {
     enable: true,
-    schemaFiles: [],
+    schemaFiles: ['../helpers/__tests__/schema.graphql'],
     scalarMap: {
       String: () => 'str',
       ID: () => 'id',
@@ -19,20 +27,19 @@ module.exports = {
       Long: () => 101,
       Object: () => ({}),
     },
+    context: {
+      customers: [{ name: 'test', id: 1 }],
+    },
     resolvers: {
       Query: {
-        student() {
-          return [
-            {
-              name: '1',
-              books: [],
-            },
-            {
-              name: '2',
-              books: [],
-            },
-          ]
-        },
+        // customers() {
+        //   return {
+        //     records: [
+        //       { customerId: 222 },
+        //       { customerId: 111, customerStatus: 'NORMAL' },
+        //     ],
+        //   }
+        // },
       },
     },
   },

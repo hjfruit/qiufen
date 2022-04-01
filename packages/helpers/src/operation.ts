@@ -4,6 +4,9 @@ import {
   isScalarType,
   isUnionType,
   OperationTypeNode,
+  Kind,
+  parse,
+  print
 } from 'graphql'
 import type { InputType, ObjectTypeDef, OutputType } from '.'
 import type {
@@ -13,7 +16,10 @@ import type {
   GraphQLInterfaceType,
   GraphQLObjectType,
   GraphQLOutputType,
-} from 'graphql'
+  SelectionSetNode,
+  DocumentNode,
+
+  DirectiveNode} from 'graphql'
 import type { Operation, TypedOperation, ScalarMap } from './interface'
 
 function _normalizeGraphqlInputType(
@@ -335,4 +341,69 @@ export const genOutputExample = (
       break
   }
   return genListTypeValue(typeName, result)
+}
+
+function _noneMock(directive: DirectiveNode) {
+  return directive.name.value !== 'mock'
+}
+function _removeMockFromSelectionSet(
+  selectionSet: SelectionSetNode,
+): SelectionSetNode {
+  return {
+    ...selectionSet,
+    selections: selectionSet.selections.map(item => {
+      switch (item.kind) {
+        case Kind.FIELD:
+        case Kind.INLINE_FRAGMENT:
+          return Object.assign(
+            {
+              ...item,
+              directives: item.directives?.filter(_noneMock),
+            },
+            item.selectionSet
+              ? { selectionSet: _removeMockFromSelectionSet(item.selectionSet) }
+              : null,
+          )
+        default:
+          return {
+            ...item,
+            directives: item.directives?.filter(_noneMock),
+          }
+      }
+    }),
+  }
+}
+/**
+ * remove mock directives from document, in case passing them to backend.
+ * @param document request document
+ */
+export const removeMockDirectivesFromDocument = (
+  document: string | DocumentNode,
+) => {
+  const documentAst =
+    typeof document === 'string'
+      ? parse(document, { noLocation: true })
+      : document
+  const definitions = documentAst.definitions.map(item => {
+    switch (item.kind) {
+      case Kind.FRAGMENT_DEFINITION:
+        return {
+          ...item,
+          selectionSet: _removeMockFromSelectionSet(item.selectionSet),
+        }
+      case Kind.OPERATION_DEFINITION:
+        return {
+          ...item,
+          directives: item.directives?.filter(_noneMock),
+          selectionSet: _removeMockFromSelectionSet(item.selectionSet),
+        }
+      default:
+        return item
+    }
+  })
+
+  return print({
+    ...documentAst,
+    definitions,
+  })
 }

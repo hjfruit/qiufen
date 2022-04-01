@@ -15,6 +15,7 @@ import type { GraphqlKitConfig, MockConfig } from './interface'
 import type { Server } from 'http'
 
 const require = createRequire(import.meta.url)
+
 interface LoadSchemaOptions {
   schemaPolicy?: GraphqlKitConfig['schemaPolicy']
   endpointUrl: GraphqlKitConfig['endpoint']['url']
@@ -64,6 +65,17 @@ async function getGraphQLSchema({
   }
   return stitchSchemas({
     mergeDirectives: true,
+    typeDefs: [
+      `
+      directive @mock(enable: Boolean, val: NumberOrBoolOrStringOrNull, len: NumberOrString, fallback: Boolean, err: GraphqlError) on FIELD | QUERY | MUTATION
+      input GraphqlError {
+        code: Int!
+        message: String!
+      }
+      scalar NumberOrBoolOrStringOrNull
+      scalar NumberOrString
+    `,
+    ],
     subschemas: [
       { schema: backendSchema },
       ...mockSchemaFiles.map((file, index) => {

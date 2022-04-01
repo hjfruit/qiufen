@@ -3,9 +3,17 @@ import { graphqlHTTP } from 'express-graphql'
 import { createProxyMiddleware } from 'http-proxy-middleware'
 import chalk from 'chalk'
 import dayjs from 'dayjs'
-import { getOperationsBySchema } from '@fruits-chain/graphql-kit-helpers'
-import { addMocksToSchema } from './directives/mock'
-import type { GraphQLSchema } from 'graphql'
+import {
+  getOperationsBySchema,
+  removeMockDirectivesFromDocument,
+} from '@fruits-chain/graphql-kit-helpers'
+import { Kind, parse } from 'graphql'
+import { addMocksToSchema } from './addMocksToSchema'
+import type {
+  BooleanValueNode,
+  GraphQLSchema,
+  OperationDefinitionNode,
+} from 'graphql'
 import type { GraphqlKitConfig, IncomingMessageWithBody } from './interface'
 
 export const BASE_PATH = '/graphql'
@@ -36,6 +44,8 @@ const createGraphqlController = async (
     schema: rawSchema,
     scalarMap: mock?.scalarMap,
     resolvers: mock?.resolvers,
+    preserveResolvers: true,
+    globalContext: mock?.context,
   })
   const graphqlHTTPOptions = {
     schema: mockedSchema,
@@ -49,20 +59,36 @@ const createGraphqlController = async (
     changeOrigin: true,
     onProxyReq(proxyReq, req: IncomingMessageWithBody) {
       // bugfix: proxy is always in pending
-      if (req.body) {
-        const bodyData = JSON.stringify(req.body)
+      const body = req.body as any
+      if (body) {
+        const document = removeMockDirectivesFromDocument(body.query)
+        const bodyData = JSON.stringify(
+          Object.assign({}, body, {
+            query: document,
+          }),
+        )
+        proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
         proxyReq.write(bodyData)
       }
     },
   })
   // handle graphql requests
   router.post(BASE_PATH, (req, res, next) => {
-    if (
-      mock?.enable &&
-      (mock.whiteList === '...' ||
-        mock.whiteList === undefined ||
-        mock.whiteList?.includes(req.body.operationName))
-    ) {
+    const operation = parse(req.body.query, {
+      noLocation: true,
+    }).definitions.find(item => item.kind === Kind.OPERATION_DEFINITION) as
+      | OperationDefinitionNode
+      | undefined
+    const operationMockDirectiveEnable = () => {
+      return (
+        operation?.directives
+          ?.find(item => item.name.value === 'mock')
+          ?.arguments?.find(arg => arg.name.value === 'enable')?.value as
+          | BooleanValueNode
+          | undefined
+      )?.value
+    }
+    if (mock?.enable && operationMockDirectiveEnable()) {
       console.log(
         chalk.red(
           `[${req.socket.remoteAddress}]`,
@@ -84,7 +110,7 @@ const createGraphqlController = async (
       proxyMiddleware(req, res, next)
     }
   })
-  router.use(BASE_PATH, graphqlHTTP(graphqlHTTPOptions))
+  router.post(`${BASE_PATH}`, graphqlHTTP(graphqlHTTPOptions))
 
   return router
 }
