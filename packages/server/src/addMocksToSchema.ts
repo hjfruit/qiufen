@@ -1,10 +1,16 @@
 import vm from 'vm'
 import { mapSchema, MapperKind } from '@graphql-tools/utils'
 import {
+  getNullableType,
   GraphQLError,
+  GraphQLInterfaceType,
+  GraphQLUnionType,
+  isAbstractType,
   isEnumType,
   isListType,
+  isObjectType,
   isScalarType,
+  isUnionType,
   Kind,
 } from 'graphql'
 import { addResolversToSchema } from '@graphql-tools/schema'
@@ -129,11 +135,13 @@ export function addMocksToSchema({
       path: GraphQLResolveInfo['path'],
       len = 2,
     ): unknown => {
-      if (isScalarType(type)) {
-        return mockScalar(type.name, path)
+      const nullableType = getNullableType(type)
+
+      if (isScalarType(nullableType)) {
+        return mockScalar(nullableType.name, path)
       }
-      if (isEnumType(type)) {
-        const values = type.getValues()
+      if (isEnumType(nullableType)) {
+        const values = nullableType.getValues()
         if (mockVal) {
           const value = genMockVal(mockVal, path)
           if (values.some(item => item.value === value) || !mockFallback) {
@@ -142,16 +150,27 @@ export function addMocksToSchema({
         }
         return values[takeRandom(values.length)].value
       }
-      if (isListType(type)) {
+      if (isListType(nullableType)) {
         return [...new Array(+len)].map((_, index) => {
-          return mockData(type.ofType, {
+          return mockData(nullableType.ofType, {
             prev: path,
             key: index,
             typename: path.typename,
           })
         })
       }
-      return {}
+      if (isAbstractType(nullableType)) {
+        const types = schema.getPossibleTypes(nullableType)
+        const randomType = types[takeRandom(types.length)]
+        return mockData(randomType, {
+          ...path,
+          typename: randomType.name,
+        })
+      }
+      if (isObjectType(nullableType)) {
+        return { $ref: nullableType.name }
+      }
+      throw new Error(`${nullableType} not implemented`)
     }
 
     const len = mockLen?.value
@@ -162,6 +181,13 @@ export function addMocksToSchema({
         })
       : 2
     return mockData(info.returnType, info.path, len)
+  }
+
+  const typeResolver = (data: unknown) => {
+    if (typeof data === 'object' && data && '$ref' in data) {
+      return (data as { $ref: string })['$ref']
+    }
+    return
   }
 
   const schemaWithMocks = mapSchema(schema, {
@@ -190,6 +216,26 @@ export function addMocksToSchema({
       }
 
       return fieldConfig
+    },
+    [MapperKind.ABSTRACT_TYPE]: type => {
+      if (
+        preserveResolvers &&
+        type.resolveType != null &&
+        type.resolveType.length
+      ) {
+        return
+      }
+      if (isUnionType(type)) {
+        return new GraphQLUnionType({
+          ...type.toConfig(),
+          resolveType: typeResolver,
+        })
+      } else {
+        return new GraphQLInterfaceType({
+          ...type.toConfig(),
+          resolveType: typeResolver,
+        })
+      }
     },
   })
 

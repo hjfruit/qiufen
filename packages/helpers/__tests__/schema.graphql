@@ -22,5 +22,5 @@ type A implements Student {
 }
 
 type Query {
-  student(test: Test): [A]
+  student(test: Test): [Student]
 }
