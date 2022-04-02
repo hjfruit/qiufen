@@ -1,6 +1,6 @@
 {
   "name": "@fruits-chain/graphql-kit-server",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "A server which can serve a mock server and API docs for your graphql service",
   "type": "module",
   "main": "dist/index.cjs",
@@ -36,8 +36,8 @@
   },
   "homepage": "https://github.com/changhuali/graphql-kit/tree/main/packages/server#readme",
   "dependencies": {
-    "@fruits-chain/graphql-kit-helpers": "^0.0.2",
-    "@fruits-chain/graphql-kit-site": "^0.0.3",
+    "@fruits-chain/graphql-kit-helpers": "^1.0.0",
+    "@fruits-chain/graphql-kit-site": "^1.0.0",
     "@graphql-tools/load": "^7.5.0",
     "@graphql-tools/stitch": "^8.4.3",
     "@graphql-tools/url-loader": "^7.7.0",
