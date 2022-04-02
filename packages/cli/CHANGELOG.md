@@ -1,10 +1,11 @@
-# 0.0.4
+# 1.0.0
 
-2022-03-24
+2022-04-02
 
+- 🎸(feat) mock directive.
 - 🎸(feat) new commands like `check`.
 - 🎸(feat) sidebar collapse.
-- 💡(refactor) refactor all helpers.
+- 💡(refactor) refactor all packages.
 - 🐛(fix) get incorrect gql when type is union.
 - 🐛(fix) get incorrect gql when existing nest args.
 - 🐛(fix) failed to request several assets of playground.
