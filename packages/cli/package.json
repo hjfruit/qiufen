@@ -1,6 +1,6 @@
 {
   "name": "@fruits-chain/graphql-kit-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A cli for graphql-kit",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/changhuali/graphql-kit/tree/main/packages/cli#readme",
   "dependencies": {
-    "@fruits-chain/graphql-kit-server": "^1.0.0",
+    "@fruits-chain/graphql-kit-server": "^1.0.1",
     "chalk": "3.0.0",
     "chokidar": "^3.5.3",
     "commander": "^8.3.0",
