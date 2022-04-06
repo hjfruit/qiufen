@@ -90,7 +90,10 @@ const createGraphqlController = async (
     }
     const isIntrospectionQuery = req.body.operationName === 'IntrospectionQuery'
     if (
-      (mock?.enable && operationMockDirectiveEnable()) ||
+      (mock?.enable &&
+        (operationMockDirectiveEnable() ??
+          mock.mockDirectiveDefaultEnableValue ??
+          true)) ||
       isIntrospectionQuery
     ) {
       console.log(

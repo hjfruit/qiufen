@@ -23,6 +23,8 @@ export type SchemaPolicy = 'local' | 'remote'
 export interface MockConfig {
   /** enable the mock ability while it's true */
   enable: boolean
+  /** the default value of enable arg in mock directive, default is true */
+  mockDirectiveDefaultEnableValue: boolean
   /** schema files used for dev env, valid when enable is true */
   schemaFiles?: string[]
   /** scalar value map rules, you should add all your scalar type here or you'll get an error */

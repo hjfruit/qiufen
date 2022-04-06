@@ -1,3 +1,15 @@
+# 1.0.2
+
+2022-04-06
+
+- 🎸(feat) new config option mock.mockDirectiveDefaultEnableValue.
+
+# 1.0.1
+
+2022-04-02
+
+- fix: 🐛 abstract type mock error.
+
 # 1.0.0
 
 2022-04-02
