@@ -39,7 +39,8 @@ interface IOptions {
 
 // interpret string
 function interpret(templateStr: string, context: Record<string, any>) {
-  const match = templateStr.match(/^\${(.*?)}$/)
+  const match = templateStr.match(/^%{(.*?)}$/)
+  console.log(match?.[1])
   if (match && match[1]) {
     return vm.runInNewContext(match[1], context)
   }
