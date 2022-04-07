@@ -10,5 +10,5 @@
       "access": "public"
     }
   },
-  "ignoreChanges": ["**/test/**", "**/__tests__/**", "**/*.md"]
+  "ignoreChanges": ["**/test/**", "**/__tests__/**"]
 }

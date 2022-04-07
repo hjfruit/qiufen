@@ -7,7 +7,6 @@
     "prepare": "husky install",
     "build": "lerna run build",
     "clean": "lerna run clean",
-    "prerelease": "yarn build",
     "release": "cross-env HUSKY=0 lerna publish"
   },
   "devDependencies": {
