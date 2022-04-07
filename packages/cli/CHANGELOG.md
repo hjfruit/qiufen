@@ -1,8 +1,15 @@
+# 1.0.3
+
+2022-04-07
+
+- fix: 🐛 unknown proxy occurs when mocking
+- fix: 🐛 micro script conflict with tag template of js
+
 # 1.0.2
 
 2022-04-06
 
-- 🎸(feat) new config option mock.mockDirectiveDefaultEnableValue.
+- feat: 🎸 new config option mock.mockDirectiveDefaultEnableValue.
 
 # 1.0.1
 
