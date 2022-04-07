@@ -32,14 +32,11 @@ module.exports = {
     },
     resolvers: {
       Query: {
-        // customers() {
-        //   return {
-        //     records: [
-        //       { customerId: 222 },
-        //       { customerId: 111, customerStatus: 'NORMAL' },
-        //     ],
-        //   }
-        // },
+        customers() {
+          return {
+            records: [{ customerId: 222 }, { customerId: 111 }],
+          }
+        },
       },
     },
   },

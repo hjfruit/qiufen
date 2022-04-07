@@ -12,6 +12,7 @@ import {
   isScalarType,
   isUnionType,
   Kind,
+  defaultFieldResolver,
 } from 'graphql'
 import { addResolversToSchema } from '@graphql-tools/schema'
 import { merge, isObject } from 'lodash'
@@ -40,7 +41,6 @@ interface IOptions {
 // interpret string
 function interpret(templateStr: string, context: Record<string, any>) {
   const match = templateStr.match(/^%{(.*?)}$/)
-  console.log(match?.[1])
   if (match && match[1]) {
     return vm.runInNewContext(match[1], context)
   }
@@ -56,7 +56,6 @@ export function addMocksToSchema({
   schema,
   scalarMap,
   resolvers,
-  preserveResolvers,
   globalContext = {},
 }: IOptions): GraphQLSchema {
   const mockResolver: GraphQLFieldResolver<unknown, any> = (
@@ -193,37 +192,27 @@ export function addMocksToSchema({
 
   const schemaWithMocks = mapSchema(schema, {
     [MapperKind.OBJECT_FIELD]: ({ ...fieldConfig }) => {
-      const { resolve: oldResolver } = fieldConfig
-
-      if (!preserveResolvers || !oldResolver) {
-        fieldConfig.resolve = mockResolver
-      } else {
-        fieldConfig.resolve = async (source, args, context, info) => {
-          const [mockedValue, resolvedValue] = await Promise.all([
-            mockResolver(source, args, context, info),
-            oldResolver(source, args, context, info),
-          ])
-          if (mockedValue instanceof Error) {
-            if (!resolvedValue) {
-              return mockedValue
-            }
-            return resolvedValue
+      fieldConfig.resolve = async (source, args, context, info) => {
+        const [mockedValue, resolvedValue] = await Promise.all([
+          mockResolver(source, args, context, info),
+          defaultFieldResolver(source, args, context, info),
+        ])
+        if (mockedValue instanceof Error) {
+          if (!resolvedValue) {
+            return mockedValue
           }
-          if (isObject(mockedValue)) {
-            return merge(mockedValue, resolvedValue)
-          }
-          return resolvedValue === undefined ? mockedValue : resolvedValue
+          return resolvedValue
         }
+        if (isObject(mockedValue)) {
+          return merge(mockedValue, resolvedValue)
+        }
+        return resolvedValue === undefined ? mockedValue : resolvedValue
       }
 
       return fieldConfig
     },
     [MapperKind.ABSTRACT_TYPE]: type => {
-      if (
-        preserveResolvers &&
-        type.resolveType != null &&
-        type.resolveType.length
-      ) {
+      if (type.resolveType != null && type.resolveType.length) {
         return
       }
       if (isUnionType(type)) {
