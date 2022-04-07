@@ -1,9 +1,9 @@
-# 1.0.3
+# 1.0.4
 
 2022-04-07
 
 - fix: 🐛 unknown proxy occurs when mocking
-- fix: 🐛 micro script conflict with tag template of js
+- fix: 🐛 micro script conflicts with tag template of js
 
 # 1.0.2
 
@@ -21,28 +21,28 @@
 
 2022-04-02
 
-- 🎸(feat) mock directive.
-- 🎸(feat) new commands like `check`.
-- 🎸(feat) sidebar collapse.
-- 💡(refactor) refactor all packages.
-- 🐛(fix) get incorrect gql when type is union.
-- 🐛(fix) get incorrect gql when existing nest args.
-- 🐛(fix) failed to request several assets of playground.
+- feat: 🎸 mock directive.
+- feat: 🎸 new commands like `check`.
+- feat: 🎸 sidebar collapse.
+- refactor: 💡 refactor all packages.
+- fix: 🐛 get incorrect gql when type is union.
+- fix: 🐛 get incorrect gql when existing nest args.
+- fix: 🐛 failed to request several assets of playground.
 
 # 0.0.3
 
 2022-02-09
 
-- 🎸(feat) gen typeMapper automatically.
-- 🎸(feat) support custom schemaFiles mock config option.
-- 🎸(feat) watch all config deps.
+- feat: 🎸 gen typeMapper automatically.
+- feat: 🎸 support custom schemaFiles mock config option.
+- feat: 🎸 watch all config deps.
 
 # 0.0.2
 
 2022-02-07
 
-- 🎸(feat) mock server.
-- 🎸(feat) api docs.
+- feat: 🎸 mock server.
+- feat: 🎸 api docs.
 
 # 0.0.1
 
