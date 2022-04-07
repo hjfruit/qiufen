@@ -1,6 +1,6 @@
 {
   "name": "@fruits-chain/graphql-kit-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A server which can serve a mock server and API docs for your graphql service",
   "type": "module",
   "main": "dist/index.cjs",
