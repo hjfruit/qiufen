@@ -112,7 +112,7 @@ interface PlaygroundConfig {
 
 - err
 
-  > Type: { code: Int!, message: String! }
+  > Type: { code: Int!, message: String! }  
   > Locations: FIELD
 
   If set, the query will response a result with errors you provided.
@@ -210,7 +210,7 @@ interface PlaygroundConfig {
 
 ### Micro script
 
-When the value of `val` arg is of type `String` and match the pattern ${.\*}, you'll get this power.
+When the value of `val` arg is of type `String` and matches the pattern %{.\*}, you'll get this power.
 
 **_example_**
 
@@ -220,16 +220,16 @@ document
 query customers($page: Page, $customersInput: CustomersInput)
 @mock(enable: true) {
   customers(page: $page, customersInput: $customersInput) {
-    records @mock(len: "${page.pageSize}") {
+    records @mock(len: "%{page.pageSize}") {
       customerId
         @mock(
-          val: "${path.prev.key + (page.pageCurrent - 1) * page.pageSize + 1}"
+          val: "%{path.prev.key + (page.pageCurrent - 1) * page.pageSize + 1}"
         )
       customerStatus
     }
-    pageCurrent @mock(val: "${page.pageCurrent}")
-    pageSize @mock(val: "${page.pageSize}")
-    totalRecords @mock(val: "${100}")
+    pageCurrent @mock(val: "%{page.pageCurrent}")
+    pageSize @mock(val: "%{page.pageSize}")
+    totalRecords @mock(val: "%{100}")
   }
 }
 ```
@@ -290,6 +290,7 @@ As you can see, the query can response a result associated with your operation v
 **Global vars**
 
 - path
+
   ```ts
   interface Path {
     // parent field path
