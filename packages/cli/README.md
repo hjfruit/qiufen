@@ -185,7 +185,7 @@ interface PlaygroundConfig {
 
 - fallback
 
-  > Type: Boolean
+  > Type: Boolean  
   > Locations: FIELD
 
   Sometimes, the value of `val` may cause an validation/runtime error, you can ignore the error by setting `fallback` to `true`, then the result will behave as if `val` is not set.
