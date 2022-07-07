@@ -49,7 +49,7 @@
     "antd": "^4.18.5",
     "classnames": "^2.3.1",
     "clipboard": "^2.0.8",
-    "next": "^12.0.8",
+    "next": "12.1.6",
     "react": "^17.0.2",
     "react-ace": "^9.5.0",
     "react-dom": "^17.0.2",
