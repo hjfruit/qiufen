@@ -14,6 +14,9 @@ const nextConfig = withAntdLess({
     ]
   },
   reactStrictMode: true,
+  image: {
+    dangerouslyAllowSVG: true,
+  },
   modifyVars: {
     'primary-color': '#e10098',
   },
