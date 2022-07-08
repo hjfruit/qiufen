@@ -1,7 +1,7 @@
 {
   "name": "@fruits-chain/graphql-kit-site",
   "description": "A doc site for graphql-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "type": "commonjs",
