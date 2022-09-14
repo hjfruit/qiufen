@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useState } from 'react'
-import { Input, Collapse, Tooltip, Space } from 'antd'
+import { Input, Collapse, Tooltip, Space, Checkbox } from 'antd'
 import {
   UpCircleOutlined,
   MinusCircleOutlined,
@@ -48,8 +48,11 @@ const DocSidebar: FC<IProps> = ({
     return Object.entries(groupedOperations).map(
       ([groupName, operationData]) => {
         let operationList = operationData
-        if (keyword.trim()) {
-          const pattern = new RegExp(keyword, 'i')
+        const pattern = new RegExp(keyword, 'i')
+        // search by group name
+        if (pattern.test(groupName)) {
+          // break
+        } else if (keyword.trim()) {
           operationList = operationData.filter(item => {
             return (
               // search by name
@@ -135,9 +138,9 @@ const DocSidebar: FC<IProps> = ({
 
   return (
     <div className={styles.sidebar}>
-      <Input.Search
+      <Input
         size="large"
-        placeholder="Search by name/description/type"
+        placeholder="Search by group/desc/name/type"
         onChange={evt => {
           onKeywordChange(evt.target.value)
         }}
