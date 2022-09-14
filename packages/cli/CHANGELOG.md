@@ -1,3 +1,23 @@
+# 1.0.7
+
+2022-09-14
+
+- feat: 🎸 Now search by group name is supported
+
+# 1.0.6
+
+2022-07-08
+
+- fix: 🐛 can not load assets of svg
+- fix: 🐛 the version of next is not compatible
+
+# 1.0.5
+
+2022-05-26
+
+- fix: 🐛 micro script doc error
+- fix: 🐛 doc format error
+
 # 1.0.4
 
 2022-04-07
