@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import {
   getOperationsBySchema,
   removeMockDirectivesFromDocument,
-} from '@fruits-chain/graphql-kit-helpers'
+} from '@fruits-chain/qiufen-helpers'
 import { Kind, parse } from 'graphql'
 import { addMocksToSchema } from './addMocksToSchema'
 import type {

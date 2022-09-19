@@ -1,5 +1,5 @@
 import express from 'express'
-import { createNextServer } from '@fruits-chain/graphql-kit-site'
+import { createNextServer } from '@fruits-chain/qiufen-site'
 
 /**
  * create a doc controller

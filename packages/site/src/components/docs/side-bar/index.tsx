@@ -7,14 +7,11 @@ import {
 } from '@ant-design/icons'
 import { useThrottleFn } from '@fruits-chain/hooks-laba'
 import classnames from 'classnames'
-import {
-  genGQLStrInGroup,
-  groupOperations,
-} from '@fruits-chain/graphql-kit-helpers'
+import { genGQLStrInGroup, groupOperations } from '@fruits-chain/qiufen-helpers'
 import { copy } from '../content/operation-doc'
 import styles from './index.module.less'
 import type { CollapseProps } from 'antd'
-import type { TypedOperation } from '@fruits-chain/graphql-kit-helpers'
+import type { TypedOperation } from '@fruits-chain/qiufen-helpers'
 import type { FC } from 'react'
 
 export interface IProps {

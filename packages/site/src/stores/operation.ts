@@ -1,5 +1,5 @@
 import create from 'zustand'
-import type { TypedOperation } from '@fruits-chain/graphql-kit-helpers'
+import type { TypedOperation } from '@fruits-chain/qiufen-helpers'
 
 export enum NetworkStatus {
   /** request has not been sent */

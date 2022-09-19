@@ -4,7 +4,7 @@ import {
   genGQLStr,
   genArgsExample,
   getOperationsBySchema,
-} from '@fruits-chain/graphql-kit-helpers'
+} from '@fruits-chain/qiufen-helpers'
 import { renderPlaygroundPage } from 'graphql-playground-html'
 import { BASE_PATH } from './graphqlController'
 import type { RenderPageOptions } from 'graphql-playground-html'

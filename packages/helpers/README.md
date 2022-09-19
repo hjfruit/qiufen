@@ -1,3 +1,3 @@
-# @fruits-chain/graphql-kit-helpers
+# @fruits-chain/qiufen-helpers
 
-Collection of helper functions for graphql-kit
+Collection of helper functions for qiufen

@@ -1,19 +1,19 @@
-# @fruits-chain/graphql-kit-cli
+# @fruits-chain/qiufen-cli
 
-A cli for graphql-kit. Its main purpose is to serve a mock server and api docs for your graphql service.
+A cli for qiufen. Its main purpose is to serve a mock server and api docs for your graphql service.
 
 ## Install
 
 Install with npm:
 
 ```bash
-npm install @fruits-chain/graphql-kit-cli --save-dev
+npm install @fruits-chain/qiufen-cli --save-dev
 ```
 
 Install with yarn:
 
 ```bash
-yarn add @fruits-chain/graphql-kit-cli --dev
+yarn add @fruits-chain/qiufen-cli --dev
 ```
 
 ## Usage
@@ -21,24 +21,24 @@ yarn add @fruits-chain/graphql-kit-cli --dev
 First, you should set up a configuration file:
 
 ```bash
-yarn gk init
+yarn qiufen init
 ```
 
 After that, you can start the server:
 
 ```
-yarn gk start
+yarn qiufen start
 ```
 
 Now, you can click the link to view docs or proxy your api to the mock server.
 
 ## Configuration
 
-After running `yarn gk init`, you'll have a graphql-kit.config.js file in your directory.
+After running `yarn qiufen init`, you'll have a qiufen.config.js file in your directory.
 
 ```TS
 interface GraphqlKitConfig {
-  /** your gk service port */
+  /** your qiufen service port */
   port: number
   /** backend service config */
   endpoint: ServiceConfig
@@ -322,6 +322,6 @@ Display help for command
 
 ## FAQ
 
-- I run `yarn gk start` successfully, but i can't access the doc service in chrome.
+- I run `yarn qiufen start` successfully, but i can't access the doc service in chrome.
 
   Be sure that your port is not in unsafe port list of chrome.

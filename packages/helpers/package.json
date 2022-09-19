@@ -1,7 +1,7 @@
 {
-  "name": "@fruits-chain/graphql-kit-helpers",
+  "name": "@fruits-chain/qiufen-helpers",
   "version": "1.0.0",
-  "description": "Collection of helper functions for graphql-kit",
+  "description": "Collection of helper functions for qiufen",
   "main": "dist/index.cjs",
   "type": "module",
   "module": "dist/index.mjs",
@@ -18,7 +18,7 @@
     "build": "run-s lint clean build-bundle"
   },
   "keywords": [
-    "graphql-kit",
+    "qiufen",
     "helpers",
     "mock",
     "doc"
@@ -27,13 +27,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/changhuali/graphql-kit",
+    "url": "git+https://github.com/changhuali/qiufen",
     "directory": "packages/helpers"
   },
   "bugs": {
-    "url": "https://github.com/changhuali/graphql-kit/issues"
+    "url": "https://github.com/changhuali/qiufen/issues"
   },
-  "homepage": "https://github.com/changhuali/graphql-kit/tree/main/packages/helpers#readme",
+  "homepage": "https://github.com/changhuali/qiufen/tree/main/packages/helpers#readme",
   "peerDependencies": {
     "graphql": "^16.2.0"
   },

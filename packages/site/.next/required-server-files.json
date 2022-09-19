@@ -82,9 +82,9 @@
     "configFileName": "next.config.js",
     "image": { "dangerouslyAllowSVG": true },
     "modifyVars": { "primary-color": "#e10098" },
-    "lessVarsFilePath": "/Users/hjmac04/Desktop/graphql-kit/packages/site/src/styles/variables.less"
+    "lessVarsFilePath": "/Users/hjmac04/Desktop/work/qiufen/packages/site/src/styles/variables.less"
   },
-  "appDir": "/Users/hjmac04/Desktop/graphql-kit/packages/site",
+  "appDir": "/Users/hjmac04/Desktop/work/qiufen/packages/site",
   "files": [
     ".next/routes-manifest.json",
     ".next/server/pages-manifest.json",

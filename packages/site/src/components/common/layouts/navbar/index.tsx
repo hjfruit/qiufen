@@ -9,7 +9,7 @@ const NavbarLayout: NextPage = ({ children }) => {
     <div className={styles.page}>
       <div className={styles.header}>
         <Image className={styles.logo} width={32} height={32} src={logo} />
-        <div className={styles.appName}>graphql-kit</div>
+        <div className={styles.appName}>qiufen</div>
         <nav className={styles.nav}>
           <a className={styles.active}>Docs</a>
         </nav>

@@ -1,4 +1,4 @@
-# graphql-kit
+# qiufen
 
 A set of graphql tools.
 

@@ -1,7 +1,7 @@
 {
-  "name": "@fruits-chain/graphql-kit-cli",
-  "version": "1.0.8",
-  "description": "A cli for graphql-kit",
+  "name": "@fruits-chain/qiufen-cli",
+  "version": "1.0.0",
+  "description": "A cli for qiufen",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "files": [
@@ -9,7 +9,7 @@
     "dist"
   ],
   "bin": {
-    "gk": "bin/index.js"
+    "qiufen": "bin/index.js"
   },
   "scripts": {
     "dev": "npm run clean && rollup -c -w",
@@ -20,7 +20,7 @@
     "build": "run-s clean lint build-bundle"
   },
   "keywords": [
-    "graphql-kit",
+    "qiufen",
     "cli",
     "mock",
     "doc"
@@ -29,15 +29,15 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/changhuali/graphql-kit",
+    "url": "git+https://github.com/changhuali/qiufen",
     "directory": "packages/cli"
   },
   "bugs": {
-    "url": "https://github.com/changhuali/graphql-kit/issues"
+    "url": "https://github.com/changhuali/qiufen/issues"
   },
-  "homepage": "https://github.com/changhuali/graphql-kit/tree/main/packages/cli#readme",
+  "homepage": "https://github.com/changhuali/qiufen/tree/main/packages/cli#readme",
   "dependencies": {
-    "@fruits-chain/graphql-kit-server": "^1.0.7",
+    "@fruits-chain/qiufen-server": "^1.0.7",
     "chalk": "3.0.0",
     "chokidar": "^3.5.3",
     "commander": "^8.3.0",

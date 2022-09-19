@@ -1,31 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`genExampleValue a arguments example for the operation role query should be generated 1`] = `
+exports[`genExampleValue a arguments example for the operation student query should be generated 1`] = `
 Object {
-  "a": null,
-  "b": null,
+  "test": Object {
+    "name": null,
+  },
 }
 `;
 
-exports[`genExampleValue a return data example for the operation role query should be generated 1`] = `
-Object {
-  "name": null,
-  "sex": null,
-}
+exports[`genExampleValue a return data example for the operation student query should be generated 1`] = `
+Array [
+  Object {
+    "books": Array [
+      null,
+    ],
+    "name": null,
+    "sex": null,
+  },
+]
 `;
 
-exports[`genGQLStr a gql string for role query should be generated 1`] = `
-"query role($a: ID, $b: String!, $a1: ID, $b1: ID) {
-  role(a: $a, b: $b) {
-    ... on Student {
-      sex
-      name
-    }
-    ... on Teacher {
-      sex
-      name
-      level(a: $a1, b: $b1)
-    }
+exports[`genGQLStr a gql string for student query should be generated 1`] = `
+"query student($test: Test) {
+  student(test: $test) {
+    name
+    sex
+    books
   }
 }"
 `;
@@ -33,17 +33,11 @@ exports[`genGQLStr a gql string for role query should be generated 1`] = `
 exports[`genGQLStrInGroup gql strings for group default should be generated 1`] = `
 "# default 
 
-query role($a: ID, $b: String!, $a1: ID, $b1: ID) {
-  role(a: $a, b: $b) {
-    ... on Student {
-      sex
-      name
-    }
-    ... on Teacher {
-      sex
-      name
-      level(a: $a1, b: $b1)
-    }
+query student($test: Test) {
+  student(test: $test) {
+    name
+    sex
+    books
   }
 }
 "

@@ -1,3 +1,3 @@
-# @fruits-chain/graphql-kit-site
+# @fruits-chain/qiufen-site
 
-A doc site for graphql-kit
+A doc site for qiufen

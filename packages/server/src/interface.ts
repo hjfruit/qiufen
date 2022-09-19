@@ -1,5 +1,5 @@
 import type { IResolvers } from '@graphql-tools/utils'
-import type { ScalarMap } from '@fruits-chain/graphql-kit-helpers'
+import type { ScalarMap } from '@fruits-chain/qiufen-helpers'
 import type { IncomingMessage } from 'http'
 
 export interface IncomingMessageWithBody extends IncomingMessage {
@@ -36,7 +36,7 @@ export interface MockConfig {
 }
 
 export interface GraphqlKitConfig {
-  /** your gk service port */
+  /** your qiufen service port */
   port: number
   /** backend service config */
   endpoint: ServiceConfig

@@ -6,7 +6,7 @@ import { Command } from 'commander'
 import { isScalarType } from 'graphql'
 import inquirer from 'inquirer'
 import { watch } from 'chokidar'
-import { getGraphQLSchema, startServer } from '@fruits-chain/graphql-kit-server'
+import { getGraphQLSchema, startServer } from '@fruits-chain/qiufen-server'
 import chalk from 'chalk'
 import resolveDeps from 'resolve-dependencies'
 import obj2str from 'stringify-object'
@@ -17,10 +17,7 @@ import type { GraphQLSchema } from 'graphql'
 import type { InitQsAnswers } from './questions'
 import type { Server } from 'http'
 import type { FSWatcher } from 'chokidar'
-import type {
-  GraphqlKitConfig,
-  MockConfig,
-} from '@fruits-chain/graphql-kit-server'
+import type { GraphqlKitConfig, MockConfig } from '@fruits-chain/qiufen-server'
 import type { FileMap } from 'resolve-dependencies/lib/file'
 
 const require = createRequire(import.meta.url)
@@ -29,12 +26,12 @@ const program = new Command()
 program.version(version)
 
 const getConfigFilePath = (guard?: boolean) => {
-  const configFilePath = path.join(process.cwd(), 'graphql-kit.config.js')
+  const configFilePath = path.join(process.cwd(), 'qiufen.config.js')
   if (guard && !existsSync(configFilePath)) {
     console.log(
       chalk.red(
         `${configFilePath} is not exist, you should use ${chalk.cyan(
-          'gk init',
+          'qiufen init',
         )} to generate it`,
       ),
     )
@@ -95,7 +92,7 @@ program
       console.info(
         `${chalk.greenBright(
           '🤖 A configuration file has been generated, now you can run ',
-        )}${chalk.cyan('yarn/npm gk start')}${chalk.greenBright(
+        )}${chalk.cyan('yarn/npm qiufen start')}${chalk.greenBright(
           ' to start a server',
         )}`,
       )

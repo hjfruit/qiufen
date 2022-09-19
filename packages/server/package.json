@@ -1,6 +1,6 @@
 {
-  "name": "@fruits-chain/graphql-kit-server",
-  "version": "1.0.7",
+  "name": "@fruits-chain/qiufen-server",
+  "version": "1.0.0",
   "description": "A server which can serve a mock server and API docs for your graphql service",
   "type": "module",
   "main": "dist/index.cjs",
@@ -19,7 +19,7 @@
     "public"
   ],
   "keywords": [
-    "graphql-kit",
+    "qiufen",
     "server",
     "mock",
     "doc"
@@ -28,16 +28,16 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/changhuali/graphql-kit",
+    "url": "git+https://github.com/changhuali/qiufen",
     "directory": "packages/server"
   },
   "bugs": {
-    "url": "https://github.com/changhuali/graphql-kit/issues"
+    "url": "https://github.com/changhuali/qiufen/issues"
   },
-  "homepage": "https://github.com/changhuali/graphql-kit/tree/main/packages/server#readme",
+  "homepage": "https://github.com/changhuali/qiufen/tree/main/packages/server#readme",
   "dependencies": {
-    "@fruits-chain/graphql-kit-helpers": "^1.0.0",
-    "@fruits-chain/graphql-kit-site": "^1.0.3",
+    "@fruits-chain/qiufen-helpers": "^1.0.0",
+    "@fruits-chain/qiufen-site": "^1.0.3",
     "@graphql-tools/load": "^7.5.0",
     "@graphql-tools/stitch": "^8.4.3",
     "@graphql-tools/url-loader": "^7.7.0",
