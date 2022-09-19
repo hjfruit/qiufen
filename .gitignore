@@ -3,4 +3,3 @@ node_modules
 *.log
 dist
 temp
-packages/site/.next

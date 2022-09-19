@@ -1,0 +1,21 @@
+{
+  "../../../../node_modules/next/dist/client/index.js -> ../pages/_error": {
+    "id": 21169,
+    "files": ["static/chunks/169.532d74dd5ea355ec.js"]
+  },
+  "../components/docs/content/operation-doc/index.tsx -> ace-builds/src-noconflict/mode-javascript": {
+    "id": 50021,
+    "files": ["static/chunks/21.0c8d43d357d71b98.js"]
+  },
+  "../components/docs/content/operation-doc/index.tsx -> ace-builds/src-noconflict/theme-tomorrow": {
+    "id": 96775,
+    "files": ["static/chunks/775.b7501eb072a51fa2.js"]
+  },
+  "../components/docs/content/operation-doc/index.tsx -> react-ace": {
+    "id": 21291,
+    "files": [
+      "static/chunks/10477329.07a4c08ee9d6bc33.js",
+      "static/chunks/291.618e53f617f827b7.js"
+    ]
+  }
+}

@@ -6,6 +6,14 @@
 
 # 1.0.6
 
+# 1.0.7
+
+2022-09-14
+
+- feat: 🎸 Now search by group name is supported
+
+# 1.0.6
+
 2022-07-08
 
 - fix: 🐛 can not load assets of svg
