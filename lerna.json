@@ -9,5 +9,6 @@
       "access": "public"
     }
   },
-  "ignoreChanges": ["**/test/**", "**/__tests__/**"]
+  "ignoreChanges": ["**/test/**", "**/__tests__/**"],
+  "version": "0.0.0"
 }

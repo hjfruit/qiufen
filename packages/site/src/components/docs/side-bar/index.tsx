@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useState } from 'react'
-import { Input, Collapse, Tooltip, Space, Checkbox } from 'antd'
+import { Input, Collapse, Tooltip, Space } from 'antd'
 import {
   UpCircleOutlined,
   MinusCircleOutlined,

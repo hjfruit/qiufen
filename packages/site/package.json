@@ -43,8 +43,9 @@
   },
   "homepage": "https://github.com/changhuali/qiufen/tree/main/packages/site#readme",
   "dependencies": {
-    "@fruits-chain/qiufen-helpers": "^1.0.0",
+    "@ant-design/icons": "^4.7.0",
     "@fruits-chain/hooks-laba": "^0.0.5",
+    "@fruits-chain/qiufen-helpers": "^1.0.0",
     "ace-builds": "^1.4.13",
     "antd": "^4.18.5",
     "classnames": "^2.3.1",

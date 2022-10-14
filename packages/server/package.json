@@ -37,7 +37,7 @@
   "homepage": "https://github.com/changhuali/qiufen/tree/main/packages/server#readme",
   "dependencies": {
     "@fruits-chain/qiufen-helpers": "^1.0.0",
-    "@fruits-chain/qiufen-site": "^1.0.3",
+    "@fruits-chain/qiufen-site": "^1.0.0",
     "@graphql-tools/load": "^7.5.0",
     "@graphql-tools/stitch": "^8.4.3",
     "@graphql-tools/url-loader": "^7.7.0",
