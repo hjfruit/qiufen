@@ -1,19 +1,17 @@
 import React, { memo, useMemo, useState } from 'react'
 import { Input, Collapse, Tooltip, Space } from 'antd'
-import {
-  UpCircleOutlined,
-  MinusCircleOutlined,
-  CopyOutlined,
-  SearchOutlined,
-} from '@ant-design/icons'
+import { CopyOutlined, SearchOutlined } from '@ant-design/icons'
 import { useThrottleFn } from '@fruits-chain/hooks-laba'
 import classnames from 'classnames'
 import { genGQLStrInGroup, groupOperations } from '@fruits-chain/qiufen-helpers'
+import Image from 'next/image'
 import { copy } from '../content/operation-doc'
 import styles from './index.module.less'
 import type { CollapseProps } from 'antd'
 import type { TypedOperation } from '@fruits-chain/qiufen-helpers'
 import type { FC } from 'react'
+import collapseAll from '@/assets/images/collapse-all.png'
+import backTop from '@/assets/images/back-top.png'
 
 export interface IProps {
   operations: TypedOperation[]
@@ -178,25 +176,27 @@ const DocSidebar: FC<IProps> = ({
         </Collapse>
       </div>
       <Tooltip title="Collapse all">
-        <MinusCircleOutlined
+        <div
           style={{ bottom: 100 }}
           className={classnames(styles.topBtn, {
             [styles.show]: activeKey.length,
           })}
           onClick={() => {
             setActiveKey([])
-          }}
-        />
+          }}>
+          <Image src={collapseAll} width={32} height={32} />
+        </div>
       </Tooltip>
       <Tooltip title="Back to top">
-        <UpCircleOutlined
+        <div
           className={classnames(styles.topBtn, {
             [styles.show]: top > 800,
           })}
           onClick={() => {
             document.getElementById('sideBar')?.scrollTo(0, 0)
-          }}
-        />
+          }}>
+          <Image src={backTop} width={32} height={32} />
+        </div>
       </Tooltip>
     </div>
   )

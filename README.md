@@ -7,3 +7,7 @@ A set of graphql tools.
 ### [document](packages/cli/README.md)
 
 ### [changelog](packages/cli/CHANGELOG.md)
+
+### 1. yarn workspace @fruits-chain/qiufen-cli run cli start
+
+### 2. yarn workspace @fruits-chain/qiufen-site run dev-client

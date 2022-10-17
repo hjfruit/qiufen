@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { message, Space, Table, Tooltip, Switch } from 'antd'
+import { message, Space, Table, Tooltip, Switch, Divider, Tag } from 'antd'
 import { CopyOutlined, PlayCircleOutlined } from '@ant-design/icons'
 import ClipboardJS from 'clipboard'
 import { genGQLStr } from '@fruits-chain/qiufen-helpers'
@@ -127,7 +127,7 @@ const columnGen = (
 ): ColumnsType<ArgColumnRecord> => {
   return [
     {
-      title: 'name',
+      title: 'Name',
       dataIndex: 'name',
       width: '35%',
       render(value, record) {
@@ -139,7 +139,7 @@ const columnGen = (
       },
     },
     {
-      title: 'description',
+      title: 'Description',
       dataIndex: 'description',
       width: '25%',
       render(val, record) {
@@ -156,7 +156,7 @@ const columnGen = (
       },
     },
     {
-      title: field === 'arguments' ? 'required' : 'nullable',
+      title: field === 'arguments' ? 'Required' : 'Nullable',
       dataIndex: 'type',
       width: '20%',
       render(val: string) {
@@ -165,13 +165,21 @@ const columnGen = (
           result = !!val?.endsWith('!')
         }
         if (result === true) {
-          return <span style={{ color: '#f5222d' }}>true</span>
+          return (
+            <Tag style={{ borderRadius: 4 }} color="success">
+              True
+            </Tag>
+          )
         }
-        return 'false'
+        return (
+          <Tag style={{ borderRadius: 4 }} color="error">
+            False
+          </Tag>
+        )
       },
     },
     {
-      title: 'type',
+      title: 'Type',
       dataIndex: 'type',
       width: '20%',
       render(value: string) {
@@ -232,30 +240,40 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
       className={styles.operationDoc}
       direction="vertical">
       <div className={styles.name}>
-        <Space size={24}>
-          <span>Operation name: {operation.name}</span>
+        <Space size={40}>
           <span>
-            <Tooltip title="Copy GQL">
-              <CopyOutlined
-                id="copy"
-                data-clipboard-text={gqlStr}
-                className={styles.copyBtn}
-                onClick={() => {
-                  copy('#copy')
-                }}
-              />
-            </Tooltip>
+            Operation name:
+            <span className={styles.operationName}>{` ${operation.name}`}</span>
           </span>
           <span>
-            <Tooltip title="Debug">
-              <PlayCircleOutlined
-                className={styles.copyBtn}
-                onClick={handleDebug}
-              />
-            </Tooltip>
+            Operation type:
+            <span
+              className={
+                styles.operationName
+              }>{` ${operation.operationType}`}</span>
           </span>
+        </Space>
+        <Space size={88}>
+          <Tooltip title="Copy GQL">
+            <Space
+              id="copy"
+              data-clipboard-text={gqlStr}
+              className={styles.copyBtn}
+              onClick={() => {
+                copy('#copy')
+              }}>
+              <CopyOutlined />
+              <span className={styles.text}>Copy GQL</span>
+            </Space>
+          </Tooltip>
+          <Tooltip title="Debug">
+            <Space className={styles.copyBtn} onClick={handleDebug}>
+              <PlayCircleOutlined />
+              <span className={styles.text}>Debug</span>
+            </Space>
+          </Tooltip>
           <Switch
-            size="small"
+            size="default"
             checked={mode === 'EDITOR'}
             checkedChildren="editor"
             unCheckedChildren="table"
@@ -265,10 +283,10 @@ const OperationDoc: FC<IProps> = ({ operation }) => {
           />
         </Space>
       </div>
-      <div>Operation type: {operation.operationType}</div>
       {!!argsTreeData.length && (
         <>
-          <div>Params: </div>
+          <Divider className={styles.divider} />
+          <div className={styles.paramsText}>Params: </div>
           {mode === 'TABLE' ? (
             <Table
               columns={argsColumns}
