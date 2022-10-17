@@ -18,7 +18,7 @@ const nextConfig = withAntdLess({
     dangerouslyAllowSVG: true,
   },
   modifyVars: {
-    'primary-color': '#e10098',
+    'primary-color': '#0065FE',
   },
   lessVarsFilePath: path.resolve('src/styles/variables.less'),
   webpack: config => {

@@ -23,7 +23,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return getLayout(
     <div style={{ display: 'flex' }}>
       <Menu
-        style={{ width: 60 }}
         defaultSelectedKeys={activeKey}
         onClick={({ key }) => {
           setActiveKey([key])

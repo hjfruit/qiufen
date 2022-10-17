@@ -2,34 +2,43 @@
   position: sticky;
   top: @header-height + @space-large;
   height: calc(100vh - @header-height - @space-large * 2);
-  overflow-y: auto;
-  overflow-x: hidden;
   width: @sidebar-width;
   border-radius: 4px;
+  overflow: hidden;
   margin-right: @space-large;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  :global {
+    .ant-collapse-borderless {
+      background-color: #fff;
+    }
+  }
 }
 .main {
-  margin-top: @space-large;
   overflow: auto;
+  // 让滚动条隐藏
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
 }
 .operationItem {
-  border-top: 1px solid #eee;
-  padding: 8px;
+  // border-top: 1px solid #eee;
+  padding: 10px;
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
   &:hover {
     .active;
+    border-radius: 4px;
   }
-  &:last-of-type {
-    border-bottom: 1px solid #eee;
-  }
+  // &:last-of-type {
+  //   border-bottom: 1px solid #eee;
+  // }
 }
 .active {
-  background-color: #eee;
+  background-color: #eaf2ff;
+  color: #0065fe;
 }
 .topBtn {
   position: absolute;
@@ -53,10 +62,10 @@
 .copyBtn {
   position: absolute;
   right: 0;
-  top: -48px;
+  top: -35px;
   cursor: pointer;
   &:hover {
-    color: @primary-color;
+    color: #0065fe;
   }
 }
 .deprecated {
@@ -64,4 +73,40 @@
 }
 .warning {
   color: @warning-color;
+}
+
+.icon_color {
+  color: #0065fe;
+}
+
+.search {
+  border-radius: 4px;
+}
+
+.collapse_active {
+  :global {
+    .ant-collapse-item {
+      border-bottom: none;
+    }
+    .ant-collapse-header {
+      color: #0065fe !important;
+    }
+  }
+}
+
+.collapse_box {
+  :global {
+    .ant-collapse-item {
+      border-bottom: none !important;
+    }
+  }
+}
+
+.active_color {
+  color: #0065fe !important;
+}
+
+.wrapper_search {
+  padding: 16px;
+  background-color: #fff;
 }

@@ -4,6 +4,7 @@ import {
   UpCircleOutlined,
   MinusCircleOutlined,
   CopyOutlined,
+  SearchOutlined,
 } from '@ant-design/icons'
 import { useThrottleFn } from '@fruits-chain/hooks-laba'
 import classnames from 'classnames'
@@ -41,6 +42,23 @@ const DocSidebar: FC<IProps> = ({
     return groupOperations(operations)
   }, [operations])
 
+  const defaultActiveKey = useMemo(() => {
+    const activeKey: CollapseProps['defaultActiveKey'] = []
+    // use [].some to break in advance
+    Object.entries(groupedOperations).some(([groupName, items]) => {
+      if (
+        items.some(
+          item => item.operationType + item.name === selectedOperationId,
+        )
+      ) {
+        activeKey.push(groupName)
+      }
+    })
+    return activeKey
+  }, [])
+
+  const [activeKey, setActiveKey] = useState(defaultActiveKey)
+
   const contentJSX = useMemo(() => {
     return Object.entries(groupedOperations).map(
       ([groupName, operationData]) => {
@@ -64,8 +82,14 @@ const DocSidebar: FC<IProps> = ({
           })
         }
         if (!operationList.length) return null
+
         return (
-          <Collapse.Panel key={groupName} header={groupName}>
+          <Collapse.Panel
+            key={groupName}
+            header={groupName}
+            className={
+              activeKey.includes(groupName) ? styles.collapse_active : ''
+            }>
             <div className={styles.operationList}>
               <Tooltip title="Copy GQL">
                 <CopyOutlined
@@ -114,37 +138,36 @@ const DocSidebar: FC<IProps> = ({
         )
       },
     )
-  }, [groupedOperations, keyword, onSelect, selectedOperationId])
+  }, [groupedOperations, keyword, onSelect, selectedOperationId, activeKey])
 
-  const defaultActiveKey = useMemo(() => {
-    const activeKey: CollapseProps['defaultActiveKey'] = []
-    // use [].some to break in advance
-    Object.entries(groupedOperations).some(([groupName, items]) => {
-      if (
-        items.some(
-          item => item.operationType + item.name === selectedOperationId,
-        )
-      ) {
-        activeKey.push(groupName)
-      }
-    })
-    return activeKey
-  }, [])
-
-  const [activeKey, setActiveKey] = useState(defaultActiveKey)
+  const [isFocus, setIsFocus] = useState(false)
 
   return (
     <div className={styles.sidebar}>
-      <Input
-        size="large"
-        placeholder="Search by group/desc/name/type"
-        onChange={evt => {
-          onKeywordChange(evt.target.value)
-        }}
-        value={keyword}
-      />
+      <div className={styles.wrapper_search}>
+        <Input
+          className={styles.search}
+          onFocus={() => {
+            setIsFocus(true)
+          }}
+          onBlur={() => {
+            setIsFocus(false)
+          }}
+          suffix={
+            <SearchOutlined className={isFocus ? styles.icon_color : ''} />
+          }
+          size="large"
+          placeholder="Search by group/desc/name/type"
+          onChange={evt => {
+            onKeywordChange(evt.target.value)
+          }}
+          value={keyword}
+        />
+      </div>
       <div className={styles.main} id="sideBar" onScroll={onScroll.run}>
         <Collapse
+          className={styles.collapse_box}
+          bordered={false}
           activeKey={activeKey}
           onChange={key => {
             if (Array.isArray(key)) {
