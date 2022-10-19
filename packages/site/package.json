@@ -35,13 +35,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/changhuali/qiufen",
+    "url": "git+https://github.com/hjfruit/qiufen",
     "directory": "packages/site"
   },
   "bugs": {
-    "url": "https://github.com/changhuali/qiufen/issues"
+    "url": "https://github.com/hjfruit/qiufen/issues"
   },
-  "homepage": "https://github.com/changhuali/qiufen/tree/main/packages/site#readme",
+  "homepage": "https://github.com/hjfruit/qiufen/tree/main/packages/site#readme",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@fruits-chain/hooks-laba": "^0.0.5",

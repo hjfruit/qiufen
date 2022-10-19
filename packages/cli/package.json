@@ -29,13 +29,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/changhuali/qiufen",
+    "url": "git+https://github.com/hjfruit/qiufen",
     "directory": "packages/cli"
   },
   "bugs": {
-    "url": "https://github.com/changhuali/qiufen/issues"
+    "url": "https://github.com/hjfruit/qiufen/issues"
   },
-  "homepage": "https://github.com/changhuali/qiufen/tree/main/packages/cli#readme",
+  "homepage": "https://github.com/hjfruit/qiufen/tree/main/packages/cli#readme",
   "dependencies": {
     "@fruits-chain/qiufen-server": "^1.0.0",
     "chalk": "3.0.0",

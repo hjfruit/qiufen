@@ -27,13 +27,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/changhuali/qiufen",
+    "url": "git+https://github.com/hjfruit/qiufen",
     "directory": "packages/helpers"
   },
   "bugs": {
-    "url": "https://github.com/changhuali/qiufen/issues"
+    "url": "https://github.com/hjfruit/qiufen/issues"
   },
-  "homepage": "https://github.com/changhuali/qiufen/tree/main/packages/helpers#readme",
+  "homepage": "https://github.com/hjfruit/qiufen/tree/main/packages/helpers#readme",
   "peerDependencies": {
     "graphql": "^16.2.0"
   },
