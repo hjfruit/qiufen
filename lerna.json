@@ -1,5 +1,7 @@
 {
-  "packages": ["packages/*"],
+  "packages": [
+    "packages/*"
+  ],
   "npmClient": "yarn",
   "useWorkspaces": true,
   "command": {
@@ -9,6 +11,9 @@
       "access": "public"
     }
   },
-  "ignoreChanges": ["**/test/**", "**/__tests__/**"],
-  "version": "0.0.0"
+  "ignoreChanges": [
+    "**/test/**",
+    "**/__tests__/**"
+  ],
+  "version": "1.0.0"
 }
