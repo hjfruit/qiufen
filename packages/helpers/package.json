@@ -1,6 +1,6 @@
 {
   "name": "@fruits-chain/qiufen-helpers",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Collection of helper functions for qiufen",
   "main": "dist/index.cjs",
   "type": "module",
