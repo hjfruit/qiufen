@@ -4,9 +4,9 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import chalk from 'chalk'
 import { buildSchema } from 'graphql'
+import fetch from 'node-fetch'
 // import { UrlLoader } from '@graphql-tools/url-loader'
 // import { loadSchema } from '@graphql-tools/load'
-import fetch from 'node-fetch'
 import { stitchSchemas } from '@graphql-tools/stitch'
 import createGraphqlController from './graphqlController'
 import createDocController from './docController'
@@ -39,6 +39,7 @@ async function getGraphQLSchema({
     case undefined:
     case 'remote':
       try {
+        // TODO 这里改为手动fetch获取后端schema，这样可以拿到后端的自定义指令。不使用loadSchema它拿不到自定义指令。。。。
         const response = await fetch(endpointUrl, {
           method: 'POST',
           headers: {
@@ -46,15 +47,17 @@ async function getGraphQLSchema({
           },
           body: JSON.stringify({
             query: `
-                   query Query {
-                      _schema
+                      query sdl{
+                           _service{
+                              sdl
+                             }
                           }
                   `,
           }),
         })
 
         const { data } = (await response.json()) as any
-        const backendTypeDefs = data._schema as string
+        const backendTypeDefs = data._service.sdl as string
         backendSchema = buildSchema(backendTypeDefs)
       } catch (err) {
         throw new Error('there is an error when loading a remote schema')
