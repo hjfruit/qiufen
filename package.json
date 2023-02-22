@@ -50,8 +50,12 @@
       "path": "git-cz"
     }
   },
+  "resolutions": {
+    "@types/react": "17.0.38"
+  },
   "dependencies": {
-    "lodash.get": "^4.4.2"
+    "lodash.get": "^4.4.2",
+    "node-fetch": "^3.3.0"
   },
   "name": "qiufen"
 }

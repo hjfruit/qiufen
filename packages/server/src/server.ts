@@ -4,8 +4,9 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import chalk from 'chalk'
 import { buildSchema } from 'graphql'
-import { UrlLoader } from '@graphql-tools/url-loader'
-import { loadSchema } from '@graphql-tools/load'
+// import { UrlLoader } from '@graphql-tools/url-loader'
+// import { loadSchema } from '@graphql-tools/load'
+import fetch from 'node-fetch'
 import { stitchSchemas } from '@graphql-tools/stitch'
 import createGraphqlController from './graphqlController'
 import createDocController from './docController'
@@ -38,9 +39,23 @@ async function getGraphQLSchema({
     case undefined:
     case 'remote':
       try {
-        backendSchema = await loadSchema(endpointUrl, {
-          loaders: [new UrlLoader()],
+        const response = await fetch(endpointUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: `
+                   query Query {
+                      _schema
+                          }
+                  `,
+          }),
         })
+
+        const { data } = (await response.json()) as any
+        const backendTypeDefs = data._schema as string
+        backendSchema = buildSchema(backendTypeDefs)
       } catch (err) {
         throw new Error('there is an error when loading a remote schema')
       }

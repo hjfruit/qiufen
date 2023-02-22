@@ -6,7 +6,7 @@ import {
   OperationTypeNode,
   Kind,
   parse,
-  print
+  print,
 } from 'graphql'
 import type { InputType, ObjectTypeDef, OutputType } from '.'
 import type {
@@ -18,8 +18,8 @@ import type {
   GraphQLOutputType,
   SelectionSetNode,
   DocumentNode,
-
-  DirectiveNode} from 'graphql'
+  DirectiveNode,
+} from 'graphql'
 import type { Operation, TypedOperation, ScalarMap } from './interface'
 
 function _normalizeGraphqlInputType(
@@ -49,6 +49,7 @@ function _normalizeGraphqlInputType(
         description: item.description,
         value: item.value,
         deprecationReason: item.deprecationReason,
+        directives: item.astNode?.directives,
       })),
     }
   }
@@ -65,6 +66,7 @@ function _normalizeGraphqlInputType(
               description: item.description,
               defaultValue: item.defaultValue,
               deprecationReason: item.deprecationReason,
+              directives: item.astNode?.directives,
               type: _normalizeGraphqlInputType(item.type, [
                 ...refChain,
                 namedType.name,
@@ -122,6 +124,7 @@ function _normalizeGraphqlOutputType(
         description: item.description,
         value: item.value,
         deprecationReason: item.deprecationReason,
+        directives: item.astNode?.directives,
       })),
     }
   }
@@ -154,6 +157,7 @@ export function normalizeGraphqlField(
       description: item.description,
       defaultValue: item.defaultValue,
       deprecationReason: item.deprecationReason,
+      directives: item.astNode?.directives,
       type: _normalizeGraphqlInputType(item.type),
     }
   })
@@ -169,6 +173,7 @@ export function normalizeGraphqlField(
     name: graphQLField.name,
     description: graphQLField.description,
     deprecationReason: graphQLField.deprecationReason,
+    directives: graphQLField.astNode?.directives,
     args,
     argsExample: argsExample,
     output,

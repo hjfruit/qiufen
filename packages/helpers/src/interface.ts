@@ -3,6 +3,7 @@ import type {
   GraphQLEnumValue,
   GraphQLField,
   OperationTypeNode,
+  ConstDirectiveNode,
 } from 'graphql'
 
 export interface BaseTypeDef {
@@ -60,6 +61,7 @@ export interface ObjectFieldTypeDef
     GraphQLField<unknown, unknown>,
     'name' | 'description' | 'deprecationReason'
   > {
+  directives?: ReadonlyArray<ConstDirectiveNode>
   args: ArgTypeDef[]
   output: OutputType
 }
